@@ -9,13 +9,15 @@ import { Feed } from './Feed'
 import { Signup } from './Signup'
 import Header from './Header'
 
+
+
 function Settings(props) {
 
     return (
         <View style={{ flex: 1 }}>
             <Header navigation={props.navigation} />
             <View style={{ flex: 1, justifyContent: 'center' }}>
-                <Signup />
+
             </View >
         </View>
     )

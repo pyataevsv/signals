@@ -10,7 +10,7 @@ const Signalcard = () => {
 
     let lastBottom
     let allData = JSON.parse(feedAll)
-    let signalData = allData.messages[2]
+    let signalData = allData.messages[3]
     let profile = allData.profiles.filter(item => item.id === signalData.profile_id)[0]
 
 

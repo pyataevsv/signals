@@ -6,8 +6,10 @@ import { Provider, connect } from 'react-redux'
 import Btn from './Btn'
 import Signalcard from './Signalcard'
 import Subscrcard from './Sbscrcard'
-import Closedcard from './Closedcard'
+import Donecard from './Donecard'
 import Header from './Header'
+
+
 
 export function Feed({ fetchAll, navigation }) {
     const [count, setCount] = useState(0)
@@ -17,7 +19,8 @@ export function Feed({ fetchAll, navigation }) {
         <View>
             <Header navigation={navigation} />
             <ScrollView style={styles.view}>
-                <Closedcard />
+
+                <Donecard />
                 <Text>{count}</Text>
                 <Button
                     title='fetch feed'
@@ -27,6 +30,7 @@ export function Feed({ fetchAll, navigation }) {
                 <Signalcard />
                 <Subscrcard />
                 <Subscrcard />
+
             </ScrollView>
         </View>
 
@@ -45,7 +49,7 @@ Feed = connect(
     //mapDispatchToProp
     (dispatch) => {
         return {
-            fetchAll: () => dispatch(actionCreators.fetchALL({ limit: 10, key: '' }))
+            fetchAll: () => dispatch(actionCreators.fetchALL({ limit: 10, key: '6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP' }))
         }
 
     }
