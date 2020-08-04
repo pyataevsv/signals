@@ -6,11 +6,13 @@ const initialState = {
     feedAll: {
         isFetching: false,
         data: {},
+        fetchErr: false,
         feedCash: {
             messages: [],
             profiles: [],
             promos: [],
             history_items: [],
+            page_info: {}
         }
     }
 }
@@ -30,15 +32,29 @@ function fetchAllreducer(state, action) {
     return state
 }
 
+function fetchErrReducer(state, action) {
+    if (action.type === actions.FETCH_ERR) {
+        return action.fetchErr
+    }
+    return state
+}
+
 function refreshFeedCashReducer(state, action) {
+
     if (action.type === actions.REFRESG_FEED_CASH) {
 
         return {
             messages: state.messages.concat(action.data.messages),
-            profiles: state.messages.concat(action.data.profiles),
-            promos: state.messages.concat(action.data.promos),
-            history_items: state.messages.concat(action.data.history_items),
+            profiles: state.profiles.concat(action.data.profiles),
+            promos: state.promos.concat(action.data.promos),
+            history_items: state.history_items.concat(action.data.history_items),
+            page_info: action.data.page_info
+
         }
+    }
+    if (action.type === actions.CLEAR_CASH) {
+
+        return initialState.feedAll.feedCash
     }
     return state
 }
@@ -51,8 +67,8 @@ export const rootReducer = function (state = initialState, action) {
         feedAll: {
             data: fetchAllreducer(state.feedAll.data, action),
             isFetching: isFetchinReducer(state.feedAll.isFetching, action),
-            feedCash: refreshFeedCashReducer(state.feedAll.feedCash, action)
-
+            feedCash: refreshFeedCashReducer(state.feedAll.feedCash, action),
+            fetchErr: fetchErrReducer(state.feedAll.fetchErr, action)
         }
     }
 }

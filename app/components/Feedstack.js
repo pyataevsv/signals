@@ -2,15 +2,11 @@
 import 'react-native-gesture-handler'
 import { createStackNavigator } from '@react-navigation/stack'
 
-import React, { useState, useReducer } from 'react'
-import { StyleSheet, Text, View, Button, Image, ScrollView, TouchableWithoutFeedback } from 'react-native'
+import React from 'react'
+import { StyleSheet } from 'react-native'
 import * as actionCreators from '../reducers/actionCreators'
-import { Provider, connect } from 'react-redux'
-import Signalcard from './Signalcard'
-import Subscrcard from './Sbscrcard'
-import Donecard from './Donecard'
-import Header from './Header'
-import Historycard from './Historycard'
+import { connect } from 'react-redux'
+
 import Historyscreen from './Historyscreen'
 import Feed from './Feed'
 

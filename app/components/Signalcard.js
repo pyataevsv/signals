@@ -5,7 +5,6 @@ import * as shape from 'd3-shape'
 
 
 const Signalcard = (props) => {
-    console.log(props)
     const [cardWidth, setCardWidth] = useState(0)
 
     let lastBottom, last_profit, profitArrow_style
@@ -166,7 +165,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 10,
 
-        elevation: 2
+        elevation: 2,
     },
     profBox: {
         flexDirection: 'row',

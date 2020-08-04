@@ -4,10 +4,12 @@ import { StyleSheet, Text, View, Image, TouchableWithoutFeedback } from 'react-n
 
 export default function Header(props) {
     return (
-        <View style={{
-            padding: 15,
-            backgroundColor: 'white',
-        }}>
+        <View
+            style={{
+                padding: 15,
+                backgroundColor: 'white',
+                zIndex: 10
+            }}>
             <TouchableWithoutFeedback onPress={() => props.navigation.openDrawer()}>
                 <Image
                     style={{ width: 30, height: 25 }}

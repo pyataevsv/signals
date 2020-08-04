@@ -9,11 +9,14 @@ import Header from './Header'
 import Historycard from './Historycard'
 import Historyscreen from './Historyscreen'
 
-export default function Feed({ fetchAll, navigation, feedCash, isFetching }) {
+export default function Feed({ fetchAll, navigation, feedCash, isFetching, clearCash, fetchALLWithClear, fetchErr }) {
 
     const [blockFetching, setBlockFetching] = useState(false)
     const [fetching, setFetchingStatus] = useState(true)
     const [currentPage, setCurrentPage] = useState(1)
+    const [loaderDirection, setLoaderDirection] = useState('top')
+    const [showErrMessage, setShowErrMessage] = useState(true)
+    const [headerHeight, setHeaderHeight] = useState(0)
 
     useEffect(() => {
         if (fetching) {
@@ -23,60 +26,106 @@ export default function Feed({ fetchAll, navigation, feedCash, isFetching }) {
     })
 
     return (
-        <ScrollView style={styles.view}
-            onScroll={(e) => {
-                if ((e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height >= e.nativeEvent.contentSize.height - 50) && !blockFetching) {
-
-                    setCurrentPage(currentPage + 1)
-                    setFetchingStatus(true)
-
-                    setBlockFetching(true)
-                    setTimeout(() => {
-                        setBlockFetching(false)
-                    }, 2000);
-
-                }
-            }}
-            scrollEventThrottle={100}
-        >
+        <>
             <Header navigation={navigation} />
-            {
-                (feedCash.messages[0] != undefined) ?
-                    feedCash.messages.map((item, id) => {
+            <ScrollView style={{ backgroundColor: '#f7f7f7' }}
+                contentContainerStyle={{ paddingTop: 0 }}
 
-                        if (item.type === 'signal' && item.status === 'done') {
-                            return (
-                                <Donecard feedAll={feedCash} signalData={item} key={id} id={id} />
-                            )
-                        }
-                        if (item.type === 'signal' && item.status === 'active' && item.has_subscription === false && item.payment === 'paid') {
-                            return (
-                                <Subscrcard feedAll={feedCash} signalData={item} key={id} id={id} />
-                            )
-                        }
-                        if (item.type === 'signal' && item.status === 'active' && ((item.has_subscription === true && item.payment === 'paid') || item.payment === 'free')) {
-                            return (
-                                <Signalcard feedAll={feedCash} signalData={item} key={id} id={id} />
-                            )
-                        }
-                        if (item.type === 'history') {
-                            return (
+                onScroll={(e) => {
+                    if ((e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height >= e.nativeEvent.contentSize.height - 10) && !blockFetching) {
+                        setShowErrMessage(true)
+                        setTimeout(() => {
+                            setShowErrMessage(false)
+                        }, 4000)
+                        setLoaderDirection('bottom')
+                        setCurrentPage(currentPage + 1)
+                        setFetchingStatus(true)
 
-                                <Historycard feedAll={feedCash} navigation={navigation} signalData={item} key={id} id={id} />
+                        setBlockFetching(true)
+                        setTimeout(() => {
+                            setBlockFetching(false)
+                        }, 2000);
 
-                            )
-                        }
-                    }) :
-                    null
+                    }
+                    if (e.nativeEvent.contentOffset.y <= 0 && !blockFetching) {
+                        setShowErrMessage(true)
+                        setTimeout(() => {
+                            setShowErrMessage(false)
+                        }, 4000)
+                        setLoaderDirection('top')
+                        // setCurrentPage(1)
+                        setBlockFetching(true)
 
-            }
+                        // clearCash()
+                        // setFetchingStatus(true)
+                        setTimeout(() => {
+                            setBlockFetching(false)
+                        }, 2000);
 
-            {(isFetching) ?
-                <View style={{ alignItems: 'center' }}>
-                    <ActivityIndicator size="large" />
+                        fetchALLWithClear({ limit: 3, page: 1, key: '6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP' }, feedCash.page_info.total_lines) //feedCash.page_info.total_lines
+
+
+                    }
+                }}
+                scrollEventThrottle={100}
+
+            >
+
+                {(fetchErr && feedCash.messages.length === 0) ?
+                    <View style={{ alignItems: 'center' }}>
+                        <Text>Something went wrong!</Text>
+                    </View>
+                    : null}
+                {(fetchErr && feedCash.messages.length != 0 && showErrMessage) ?
+                    <View style={{ backgroundColor: 'red', alignItems: 'center' }}>
+                        <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold', paddingVertical: 1 }}>Something went wrong...</Text>
+                    </View>
+                    : null}
+                <View>
+                    {(isFetching && loaderDirection == 'top') ?
+                        <View style={{ alignItems: 'center' }}>
+                            <ActivityIndicator size="large" />
+                        </View>
+                        : null}
+                    {
+                        (feedCash.messages[0] != undefined) ?
+                            feedCash.messages.map((item, id) => {
+
+                                if (item.type === 'signal' && item.status === 'done') {
+                                    return (
+                                        <Donecard feedAll={feedCash} signalData={item} key={id} id={id} />
+                                    )
+                                }
+                                if (item.type === 'signal' && item.status === 'active' && item.has_subscription === false && item.payment === 'paid') {
+                                    return (
+                                        <Subscrcard feedAll={feedCash} signalData={item} key={id} id={id} />
+                                    )
+                                }
+                                if (item.type === 'signal' && item.status === 'active' && ((item.has_subscription === true && item.payment === 'paid') || item.payment === 'free')) {
+                                    return (
+                                        <Signalcard feedAll={feedCash} signalData={item} key={id} id={id} />
+                                    )
+                                }
+                                if (item.type === 'history') {
+                                    return (
+
+                                        <Historycard feedAll={feedCash} navigation={navigation} signalData={item} key={id} id={id} />
+
+                                    )
+                                }
+                            }) :
+                            null
+
+                    }
+
+                    {(isFetching && loaderDirection === 'bottom') ?
+                        <View style={{ alignItems: 'center' }}>
+                            <ActivityIndicator size="large" />
+                        </View>
+                        : null}
                 </View>
-                : null}
-        </ScrollView>
+            </ScrollView>
+        </>
     )
 }
 
@@ -86,14 +135,17 @@ Feed = connect(
     (state) => {
         return {
             feedCash: state.feedAll.feedCash,
-            isFetching: state.feedAll.isFetching
+            isFetching: state.feedAll.isFetching,
+            fetchErr: state.feedAll.fetchErr
         }
     },
 
     //mapDispatchToProp
     (dispatch) => {
         return {
-            fetchAll: (e) => dispatch(actionCreators.fetchALL(e))
+            fetchAll: (e) => dispatch(actionCreators.fetchALL(e)),
+            clearCash: () => dispatch(actionCreators.clearCash()),
+            fetchALLWithClear: (req, total_lines) => dispatch(actionCreators.fetchALLWithClear(req, total_lines))
         }
         //6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP
     }
@@ -105,5 +157,6 @@ Feed = connect(
 const styles = StyleSheet.create({
     view: {
         paddingTop: 0,
+
     }
 })
