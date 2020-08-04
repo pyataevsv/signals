@@ -27,24 +27,43 @@ export function fetchALL({ limit = '', page = '', key = '' }) {
     if (!!key) url = url + 'key=' + key + '&'
 
     console.log(url)
+
+
     return (dispatch) => {
+
         dispatch(isFetching(true))
-        fetch(url)
-            .then(resp => {
-                dispatch(isFetching(false))
-                if (!resp.ok) {
-                    throw new Error(resp.statusText)
-                }
-                return resp
-            })
-            .then(resp => resp.json())
-            .then(feed => { dispatch(fetchAllSuccess(feed)) })
+        setTimeout(() => {
+            fetch(url)
+                .then(resp => {
+                    dispatch(isFetching(false))
+                    if (!resp.ok) {
+                        throw new Error(resp.statusText)
+                    }
+                    return resp
+                })
+                .then(resp => resp.json())
+                .then(feed => {
+                    dispatch(fetchAllSuccess(feed))
+                    dispatch(refreshFeedCash(feed))
+                })
+        }, 2000);
+
+
     }
+
+
 }
 
 export function fetchAllSuccess(feed) {
     return {
         type: actions.FETCH_ALL_SUCCESS,
+        data: feed
+    }
+}
+
+export function refreshFeedCash(feed) {
+    return {
+        type: actions.REFRESG_FEED_CASH,
         data: feed
     }
 }

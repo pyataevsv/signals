@@ -4,6 +4,7 @@ export const FETCH_ALL = 'FETCH_ALL'
 export const FETCH_ALL_SUCCESS = 'FETCH_ALL_SUCCESS'
 export const IS_FETCHING = 'IS_FETCHING'
 export const FETCHED = 'FETCHED'
+export const REFRESG_FEED_CASH = 'REFRESG_FEED_CASH'
 
 
 

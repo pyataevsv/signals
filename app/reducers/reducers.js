@@ -5,7 +5,13 @@ import * as actions from './actions'
 const initialState = {
     feedAll: {
         isFetching: false,
-        data: {}
+        data: {},
+        feedCash: {
+            messages: [],
+            profiles: [],
+            promos: [],
+            history_items: [],
+        }
     }
 }
 
@@ -24,12 +30,29 @@ function fetchAllreducer(state, action) {
     return state
 }
 
+function refreshFeedCashReducer(state, action) {
+    if (action.type === actions.REFRESG_FEED_CASH) {
+
+        return {
+            messages: state.messages.concat(action.data.messages),
+            profiles: state.messages.concat(action.data.profiles),
+            promos: state.messages.concat(action.data.promos),
+            history_items: state.messages.concat(action.data.history_items),
+        }
+    }
+    return state
+}
+
+
+
 
 export const rootReducer = function (state = initialState, action) {
     return {
         feedAll: {
             data: fetchAllreducer(state.feedAll.data, action),
-            isFetching: isFetchinReducer(state.feedAll.isFetching, action)
+            isFetching: isFetchinReducer(state.feedAll.isFetching, action),
+            feedCash: refreshFeedCashReducer(state.feedAll.feedCash, action)
+
         }
     }
 }

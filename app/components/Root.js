@@ -1,11 +1,11 @@
 import 'react-native-gesture-handler'
 import React, { useState, useReducer } from 'react'
-import { StyleSheet, Text, View, Button, Image, SafeAreaView } from 'react-native'
+import { StyleSheet, Text, View, Button, Image, SafeAreaView, StatusBar } from 'react-native'
 import { store } from '../config/store'
 import { Provider, connect } from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native'
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer'
-import { Feed } from './Feed'
+import { FeedStack } from './Feedstack'
 import { Signup } from './Signup'
 import Header from './Header'
 
@@ -39,15 +39,14 @@ const Root = () => {
     return (
         <Provider store={store}>
             <NavigationContainer >
-                <SafeAreaView style={{ flex: 1 }}>
+                <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight || 0 }}>
                     <Drawer.Navigator
                         drawerContent={props => <CustomDrawerContent {...props} />}
-                        initialRouteName="Settings"
+                        initialRouteName="FeedStack"
                     >
                         <Drawer.Screen
-                            name='Feed'
-                            component={Feed}
-                            options={{ title: 'Feed' }}
+                            name='FeedStack'
+                            component={FeedStack}
                         />
                         <Drawer.Screen
                             name='Settings'
