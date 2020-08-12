@@ -8,11 +8,12 @@ import Donecard from './Donecard'
 import Header from './Header'
 import Historycard from './Historycard'
 import Historyscreen from './Historyscreen'
+import Message from './Messagecard'
 
 export default function Feed({ fetchAll, navigation, feedCash, isFetching, clearCash, fetchALLWithClear, fetchErr }) {
 
     const [blockFetching, setBlockFetching] = useState(false)
-    const [fetching, setFetchingStatus] = useState(true)
+    const [fetching, setFetchingStatus] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
     const [loaderDirection, setLoaderDirection] = useState('top')
     const [showErrMessage, setShowErrMessage] = useState(true)
@@ -21,14 +22,14 @@ export default function Feed({ fetchAll, navigation, feedCash, isFetching, clear
     useEffect(() => {
         if (fetching) {
             setFetchingStatus(false)
-            fetchAll({ limit: 3, page: currentPage, key: '6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP' })
+            fetchAll({ limit: 10, page: currentPage, key: '6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP' })//6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP
         }
     })
 
     return (
         <>
-            <Header navigation={navigation} />
-            <ScrollView style={{ backgroundColor: '#f7f7f7' }}
+
+            <ScrollView style={{ backgroundColor: 'white' }}
                 contentContainerStyle={{ paddingTop: 0 }}
 
                 onScroll={(e) => {
@@ -63,7 +64,7 @@ export default function Feed({ fetchAll, navigation, feedCash, isFetching, clear
                         }, 2000);
 
                         fetchALLWithClear({ limit: 3, page: 1, key: '6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP' }, feedCash.page_info.total_lines) //feedCash.page_info.total_lines
-
+                        //6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP
 
                     }
                 }}
@@ -87,6 +88,7 @@ export default function Feed({ fetchAll, navigation, feedCash, isFetching, clear
                             <ActivityIndicator size="large" />
                         </View>
                         : null}
+
                     {
                         (feedCash.messages[0] != undefined) ?
                             feedCash.messages.map((item, id) => {
@@ -113,6 +115,13 @@ export default function Feed({ fetchAll, navigation, feedCash, isFetching, clear
 
                                     )
                                 }
+                                if (item.type === 'message') {
+                                    return (
+
+                                        <Message key={id} navigation={navigation} signalData={item} id={id} />
+                                    )
+                                }
+
                             }) :
                             null
 

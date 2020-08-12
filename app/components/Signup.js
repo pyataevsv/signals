@@ -39,7 +39,7 @@ export const Signup = props => {
                 return (
                     <View style={styles.textContaier}>
                         <View style={{ alignItems: 'center', }}>
-                            <Text style={{ fontSize: 25, marginBottom: 20, color: '#7820fc', fontWeight: '800' }}>Create account</Text>
+                            <Text style={{ fontSize: 25, marginBottom: 20, color: '#7820fc', fontWeight: '600' }}>Create account</Text>
                         </View>
                         <View style={{ alignItems: 'center', }}>
                             <Text style={{ fontSize: 15, marginBottom: 20, color: 'grey', textAlign: 'center' }}>Let's us know what your email and password</Text>
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
         borderTopWidth: 1,
         borderLeftWidth: 1,
         borderRightWidth: 1,
-        borderColor: 'black'
+        borderColor: 'grey'
     },
     error: {
         color: 'red'

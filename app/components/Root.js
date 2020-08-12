@@ -1,74 +1,92 @@
 import 'react-native-gesture-handler'
-import React, { useState, useReducer } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, Button, Image, SafeAreaView, StatusBar } from 'react-native'
-import { store } from '../config/store'
+import * as actionCreators from '../reducers/actionCreators'
 import { Provider, connect } from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native'
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { FeedStack } from './Feedstack'
 import { Signup } from './Signup'
+import Stats from './Stats'
 import Header from './Header'
-
 
 
 function Settings(props) {
 
     return (
         <View style={{ flex: 1 }}>
-            <Header navigation={props.navigation} />
             <View style={{ flex: 1, justifyContent: 'center' }}>
-
+                <Signup />
             </View >
         </View>
     )
 }
 
-const Drawer = createDrawerNavigator();
+const Drawer = createBottomTabNavigator();
 
-function CustomDrawerContent(props) {
+
+function Root({ fetchAll }) {
+
+    const [fetching, setFetchingStatus] = useState(true)
+
+    useEffect(() => {
+        if (fetching) {
+            setFetchingStatus(false)
+            fetchAll({ limit: 10, page: 1, key: '6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP' })//
+        }
+    })
+
     return (
-        <DrawerContentScrollView {...props}>
-            <Image style={{ height: 100, width: 400 }} source={require('../assets/icons/trading1.png')} />
-            <DrawerItemList {...props} />
-        </DrawerContentScrollView>
+
+        <NavigationContainer >
+            <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight || 0 }}>
+                <Drawer.Navigator
+                    initialRouteName="Feed"
+                >
+                    <Drawer.Screen
+                        name='Feed'
+                        component={FeedStack}
+                        options={({ route }) => ({
+                            tabBarIcon: ({ focused, color }) => {
+                                let iconPath = (focused) ? require('../assets/icons/feed.png') : require('../assets/icons/feed_black.png')
+                                return <Image style={styles.tabIcon} source={iconPath} />
+                            },
+                            title: route.name
+
+                        })}
+                    />
+                    <Drawer.Screen
+                        name='Stats'
+                        component={Stats}
+                        options={({ route }) => ({
+                            tabBarIcon: ({ focused, color }) => {
+                                let iconPath = (focused) ? require('../assets/icons/stats1_active.png') : require('../assets/icons/stats1.png')
+                                return <Image style={styles.tabIcon} source={iconPath} />
+                            },
+                            title: route.name
+
+                        })}
+
+                    />
+                    <Drawer.Screen
+                        name='Settings'
+                        component={Settings}
+                        options={({ route }) => ({
+                            tabBarIcon: ({ focused, color }) => {
+                                let iconPath = (focused) ? require('../assets/icons/set_active.png') : require('../assets/icons/fill5.png')
+                                return <Image style={styles.tabIcon} source={iconPath} />
+                            },
+                            title: route.name
+
+                        })}
+                    />
+                </Drawer.Navigator>
+            </SafeAreaView>
+        </NavigationContainer>
+
     )
 }
-
-const Root = () => {
-
-    return (
-        <Provider store={store}>
-            <NavigationContainer >
-                <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight || 0 }}>
-                    <Drawer.Navigator
-                        drawerContent={props => <CustomDrawerContent {...props} />}
-                        initialRouteName="FeedStack"
-                    >
-                        <Drawer.Screen
-                            name='FeedStack'
-                            component={FeedStack}
-                        />
-                        <Drawer.Screen
-                            name='Settings'
-                            component={Settings}
-                            options={({ route }) => ({
-                                tabBarIcon: ({ focused, color }) => {
-                                    let iconPath = (focused) ? require('../assets/icons/set_active.png') : require('../assets/icons/fill5.png')
-                                    return <Image style={styles.tabIcon} source={iconPath} />
-                                },
-                                title: route.name
-
-                            })}
-                        />
-                    </Drawer.Navigator>
-                </SafeAreaView>
-            </NavigationContainer>
-        </Provider>
-    )
-}
-
-
-
 
 const styles = StyleSheet.create({
     view: {
@@ -91,4 +109,19 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
     }
 })
+
+Root = connect(
+    //mapStateToProp
+    null,
+
+    //mapDispatchToProp
+    (dispatch) => {
+        return {
+            fetchAll: (e) => dispatch(actionCreators.fetchALL(e)),
+        }
+        //6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP
+    }
+)(Root)
+
+
 export default Root

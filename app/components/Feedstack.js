@@ -8,6 +8,7 @@ import * as actionCreators from '../reducers/actionCreators'
 import { connect } from 'react-redux'
 
 import Historyscreen from './Historyscreen'
+import Messagescreen from './Messagescreen'
 import Feed from './Feed'
 
 const Stack = createStackNavigator()
@@ -21,9 +22,13 @@ export function FeedStack(props) {
                     return {
                         headerShown: false,
                     }
-                } else {
+                } else if (route.name.slice(0, 3) === 'his') {
                     return {
                         title: 'History'
+                    }
+                } else {
+                    return {
+                        title: ''
                     }
                 }
             }}
@@ -31,11 +36,19 @@ export function FeedStack(props) {
             <Stack.Screen name="FeedStack" component={Feed} />
             {('messages' in props.feedAll) ?
 
-                (Array.from(new Set(props.feedAll.messages.filter(i => i.type === 'history').map(i => i.signal_id)))).map((item, id) => {
+                [...new Set(props.feedAll.messages.filter(i => (i.type === 'history' || i.type === 'message')).map((i, f, arr) =>
+                    ({
+                        type: i.type,
+                        signal_id: i.signal_id,
+                    })).map(i => JSON.stringify(i)))]
+                    .map(i => JSON.parse(i))
+                    .map((item, id, arr) => {
 
-                    return <Stack.Screen key={id} name={'History' + item} component={Historyscreen} />
+                        if (item.type === 'history') return <Stack.Screen key={id} name={item.type + item.signal_id} component={Historyscreen} />
+                        if (item.type === 'message') return <Stack.Screen key={id} name={item.type + item.signal_id} component={Messagescreen} />
 
-                }) : null}
+                    })
+                : null}
 
         </Stack.Navigator>
     );
@@ -49,13 +62,13 @@ FeedStack = connect(
         }
     },
 
-    //mapDispatchToProp
-    (dispatch) => {
-        return {
-            fetchAll: () => dispatch(actionCreators.fetchALL({ limit: 20, key: '6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP' }))
-        }
-        //
-    }
+    // //mapDispatchToProp
+    // (dispatch) => {
+    //     return {
+    //         fetchAll: () => dispatch(actionCreators.fetchALL({ limit: 10, key: '6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP' }))
+    //     }
+    //     //6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP
+    // }
 )(FeedStack)
 
 

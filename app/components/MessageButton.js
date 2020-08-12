@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View, TouchableHighlight, Image } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 
 function Btn(props) {
@@ -13,6 +13,7 @@ function Btn(props) {
             >
                 <View style={styles.button}>
                     <Text style={styles.text}>{props.title}</Text>
+                    <Image source={require('../assets/icons/key_arrow_right-white.png')} />
                 </View>
             </LinearGradient>
         </TouchableHighlight>
@@ -23,23 +24,21 @@ export default Btn
 
 const styles = StyleSheet.create({
     touch: {
-        borderRadius: 23,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        width: '100%',
     },
-    gradient: {
-        borderRadius: 23
-    },
-    button: {
-        alignItems: "center",
-        backgroundColor: "transparent",
-        paddingVertical: 15,
-        paddingHorizontal: 30,
-        borderRadius: 23,
 
+    button: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: "transparent",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
     },
     text: {
         fontSize: 16,
-        fontWeight: '700',
+        fontWeight: '600',
         color: 'white'
     },
 })

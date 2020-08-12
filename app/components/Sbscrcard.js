@@ -58,9 +58,14 @@ const Donecard = (props) => {
     const min = Math.min.apply(null, data)
     lastBottom = 100 - 100 * (data[data.length - 1] - min) / (max - min)
 
+    const innerColor = 'rgb(' + signalData.market_r_color + ',' + signalData.market_g_color + ',' + signalData.market_b_color + ')'
+    const outerColor = 'rgba(' + signalData.market_r_color + ',' + signalData.market_b_color + ',' + signalData.market_b_color + ',0.2)'
 
+    const marketInicator = <View style={[styles.marketIndicator, { backgroundColor: outerColor }]}>
+        <View style={[styles.marketIndicatorInner, { backgroundColor: innerColor }]}></View>
+    </View>
 
-
+    console.log(marketInicator)
     return (
         <View style={styles.container}>
             <View style={styles.profBox}>
@@ -75,13 +80,16 @@ const Donecard = (props) => {
             <View style={{ marginBottom: 10 }}>
                 <Text>{signalData.text}</Text>
             </View>
-            <View>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {marketInicator}
                 <Text style={{ fontSize: 25, fontWeight: 'bold' }}>{signalData.graph.name}</Text>
             </View>
             <View>
                 <View style={{ ...StyleSheet.absoluteFill, zIndex: 2, alignItems: 'center' }}>
-                    <Image style={{ width: 140, height: 140 }} source={require('../assets/icons/locked.png')} />
-                    <Text style={{ fontSize: 30, fontWeight: '600' }}>Buy premium</Text>
+                    <View style={styles.lockedBox}>
+                        <Image style={{ width: 50, height: 50 }} source={require('../assets/icons/locked.png')} />
+                    </View>
+                    <Text style={{ fontSize: 30, fontWeight: '700' }}>Buy premium</Text>
                     <Text style={{ textAlign: 'center', marginVertical: 10 }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</Text>
                     <Btn title='Get Started' />
                 </View>
@@ -102,7 +110,7 @@ const Donecard = (props) => {
 
                 <View style={{ height: 150, backgroundColor: '#ffffff' }}>
                     <View >
-                        <View style={Object.assign({}, styles.price, { top: lastBottom })}><Text style={{ color: fontColor }}>{signalData.graph.current_price}</Text></View>
+                        {/* <View style={Object.assign({}, styles.price, { top: lastBottom })}><Text style={{ color: fontColor }}>{signalData.graph.current_price}</Text></View> */}
 
                         <View style={{ position: 'absolute', height: '100%', width: '100%', left: -20, zIndex: 1 }}>
                             <LineChart
@@ -136,47 +144,66 @@ const Donecard = (props) => {
                 </View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <View style={{ marginLeft: 10 }}>
-                        <View><Text style={{ color: fontColor }}>Current price</Text></View>
-                        <View><Text style={{ fontSize: 26, fontWeight: 'bold', color: fontColor }}>{signalData.graph.current_price}</Text></View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-                            <ArrowImage />
-
-                            <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, }} />
-
+                        <View style={{ position: 'relative', top: 7, left: 1 }}>
+                            <Text style={{ color: fontColor }}>Current price</Text>
                         </View>
+                        <View>
+                            <Image source={require('../assets/342.png')} style={{ height: 40, width: 80 }} />
+                        </View>
+                        {/* <View style={{ position: 'relative', bottom: 7, left: 3, flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+                            {(priceDiff > 0) ?
+
+                                <View style={[{ position: 'relative', top: 3, height: 10, width: 10, borderTopWidth: 3, borderRightWidth: 3, borderColor: 'rgba(19,8,254,0.3)' }, { transform: [{ rotateZ: "-45deg" }] }]} />
+                                :
+                                <View style={[{ position: 'relative', bottom: 3, height: 10, width: 10, borderTopWidth: 3, borderRightWidth: 3, borderColor: 'rgba(19,8,254,0.3)' }, { transform: [{ rotateZ: "135deg" }] }]} />
+                            }
+                            <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'relative' }} />
+                        </View> */}
                     </View>
 
 
                 </View>
 
                 <View style={{ marginTop: 30, height: 50, marginHorizontal: 10 }}
-                    onLayout={(e) => {
-                        setCardWidth(e.nativeEvent.layout.width)
-
-                    }}
+                    onLayout={(e) => { setCardWidth(e.nativeEvent.layout.width) }}
                 >
                     <View style={{ backgroundColor: '#deddff', height: 2 }}></View>
 
-                    <View style={{ alignItems: 'center', position: 'absolute', left: -23, top: -15, zIndex: 1 }}>
-
-                        <Image blurRadius={2} style={{ tintColor: '#e8b1ff' }} source={require('../assets/icons/doto.png')} />
-
-                        <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'absolute', top: 30 }} />
+                    <View style={{ alignItems: 'center', position: 'absolute', zIndex: 1 }}>
+                        <View style={{ position: 'relative' }}>
+                            <View style={styles.dot}>
+                                <View style={styles.dotInner}></View>
+                            </View>
+                            <View style={{ position: 'relative', right: '40%' }}>
+                                <Image source={require('../assets/342.png')} style={{ height: 17, width: 40 }} />
+                            </View>
+                        </View>
                     </View>
-                    <View style={{ alignItems: 'center', position: 'absolute', left: -18 + openPricePosition, top: -15, zIndex: 0 }}>
-                        <Image blurRadius={2} style={{ tintColor: '#e8b1ff' }} source={require('../assets/icons/doto.png')} />
-                        <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'absolute', top: 30 }} />
-
+                    <View style={{ alignItems: 'center', position: 'absolute', left: openPricePosition, zIndex: 0 }}>
+                        <View style={{ position: 'relative' }}>
+                            <View style={styles.dot}>
+                                <View style={styles.dotInner}></View>
+                            </View>
+                            <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'relative', right: '40%' }} />
+                        </View>
                     </View>
-                    <View style={{ alignItems: 'center', position: 'absolute', right: -23, top: -15, zIndex: 1 }}>
-                        <Image blurRadius={2} style={{ tintColor: '#e8b1ff' }} source={require('../assets/icons/doto.png')} />
-                        <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'absolute', top: 30 }} />
+                    <View style={{ alignItems: 'center', position: 'absolute', left: 0 + cardWidth, zIndex: 1 }}>
+                        <View style={{ position: 'relative' }}>
+                            <View style={styles.dot}>
+                                <View style={styles.dotInner}></View>
+                            </View>
+                            <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'relative', right: '40%' }} />
 
+                        </View>
                     </View>
 
-                    <View style={{ alignItems: 'center', position: 'absolute', left: currentPricePosition, top: -13, zIndex: 2 }}>
-                        <Image blurRadius={2} style={{ tintColor: '#e8b1ff' }} source={require('../assets/icons/dot.png')} style={{ width: 40, height: 40, position: 'absolute' }} />
-                        <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'absolute', top: -10 }} />
+
+
+                    <View style={{ alignItems: 'center', position: 'absolute', left: currentPricePosition, top: -1, zIndex: 2 }}>
+                        <View style={{ position: 'relative' }}>
+                            <View style={styles.doto}></View>
+                            <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'relative', right: '40%', top: -35 }} />
+                        </View>
                     </View>
                 </View>
             </View>
@@ -200,7 +227,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 10,
 
-        elevation: 2
+        elevation: 5
     },
     profBox: {
         flexDirection: 'row',
@@ -242,6 +269,66 @@ const styles = StyleSheet.create({
         marginRight: 10,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    dotInner: {
+        width: 5,
+        height: 5,
+        borderRadius: 7,
+        backgroundColor: 'white'
+    },
+    marketIndicator: {
+
+        width: 20,
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10,
+        borderRadius: 50
+    },
+    marketIndicatorInner: {
+
+        width: 10,
+        height: 10,
+        borderRadius: 50
+    },
+    dot: {
+        position: 'relative',
+        bottom: 5,
+        width: 12,
+        height: 12,
+        borderRadius: 15,
+        backgroundColor: 'rgba(204, 38, 252,0.3)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    doto: {
+        position: 'relative',
+        bottom: 3,
+        width: 9,
+        height: 9,
+        borderRadius: 15,
+        backgroundColor: 'rgba(50, 14, 253,0.3)',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    lockedBox: {
+        backgroundColor: 'white',
+        alignSelf: 'center',
+
+
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.3,
+        shadowRadius: 10,
+        elevation: 4,
+
+        marginTop: 30,
+        marginBottom: 10,
+        height: 70,
+        width: 70,
+        borderRadius: 70,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 
