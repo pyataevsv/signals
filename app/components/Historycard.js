@@ -1,7 +1,8 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image, TouchableWithoutFeedback } from 'react-native'
+import { StyleSheet, View, Image, TouchableWithoutFeedback } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import Historybutton from './Historybutton'
+import { HistoryButton } from './Buttons'
+import Text from './SFText'
 
 const Historycard = (props) => {
 
@@ -12,72 +13,62 @@ const Historycard = (props) => {
     const history_items = allData.history_items.filter(item => item.signal_id === signalData.signal_id)
 
     return (
-        <View style={styles.container}>
-            <View style={{ paddingHorizontal: 20, }}>
-                <View style={styles.profBox}>
-                    <View style={styles.imgBox}>
-                        <Image style={styles.img} source={{ uri: profile.image }} />
-                    </View>
-                    <View style={styles.poftitleBox}>
-                        <View style={{ flex: 1, flexDirection: 'row' }}>
-                            <View style={{ justifyContent: 'flex-end' }}>
-                                <Text style={{ fontWeight: 'bold' }}>{profile.name}</Text>
-                            </View>
-                            <View style={{ justifyContent: 'flex-end' }}>
-                                <Text style={{ position: 'relative', top: 1, fontSize: 20, color: 'rgba(0,0,0,0.7)' }}> <Text style={{ color: 'blue' }}>*</Text>has made changes</Text>
-                            </View>
+        <>
+            <View style={styles.container}>
+                <View style={{}}>
+                    <View style={[styles.profBox, { paddingHorizontal: 20 }]}>
+                        <View style={styles.imgBox}>
+                            <Image style={styles.img} source={{ uri: profile.image }} />
                         </View>
-                        <View style={{ flex: 1 }}><Text style={{ color: 'grey' }}>{signalData.time}</Text></View>
-                    </View>
-                </View>
-                {(signalData.text ?
-                    <View style={{ marginBottom: 10 }}>
-                        <Text>{signalData.text}</Text>
-                    </View> : null)}
-                <View>
-                    {signalData.history_items.map((item, id) => {
-                        return (
-                            <View key={id}>
-                                <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderColor: '#efefef', borderBottomWidth: 1, }}>
-                                    <View
-                                        style={{ marginLeft: 10, width: 40, justifyContent: 'center', alignItems: 'center', }}
-                                    >
-                                        {(item.type === 'take_profit') ?
-                                            <View >
-                                                <View style={{ position: 'relative', top: 0 }}><Text style={{ color: '#db25fc' }} > Take</Text></View>
-                                                <View style={{ position: 'relative', bottom: 0, color: 'white' }}><Text style={{ color: '#db25fc' }}>profit</Text></View>
-                                            </View>
-                                            :
-                                            <View>
-                                                <View style={{ position: 'relative', top: 0 }}><Text style={{ color: '#1308FE' }} >Stop</Text></View>
-                                                <View style={{ position: 'relative', bottom: 0, color: 'white' }}><Text style={{ color: '#1308FE' }}>loss</Text></View>
-                                            </View>}
-                                    </View>
-
-                                    <View style={{ flexGrow: 2, justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginLeft: 0 }}>
-                                        <Text style={{ fontSize: 30, marginLeft: 0, fontWeight: '300' }}>{item.old}</Text>
-                                        <Image style={{ marginHorizontal: 10 }} source={require('../assets/icons/arrow_right.png')} />
-                                        <Text style={{ fontSize: 30, marginLeft: 0, fontWeight: '300' }}>{item.new}</Text>
-                                    </View>
+                        <View style={styles.poftitleBox}>
+                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                                <View style={{ justifyContent: 'flex-end' }}>
+                                    <Text semibold>{profile.name}</Text>
+                                </View>
+                                <View style={{ justifyContent: 'flex-end' }}>
+                                    <Text style={{ position: 'relative', color: 'rgba(0,0,0,0.7)' }}> <Text style={{ color: 'blue' }}>*</Text>has made changes</Text>
                                 </View>
                             </View>
-                        )
-                    })}
-                </View>
-                {/* <View style={{ justifyContent: 'flex-end' }}>
-                {(props.navigation) ? <TouchableWithoutFeedback onPress={() => props.navigation.navigate('history' + signalData.signal_id, { history_items })}>
-                    <View>
-                        <Image style={{ position: 'relative', bottom: 5 }} source={require('../assets/icons/key_arrow_right.png')} />
+                            <View style={{ flex: 1 }}><Text style={{ color: 'grey' }}>{signalData.time}</Text></View>
+                        </View>
                     </View>
-                </TouchableWithoutFeedback>
-                    : null}
-            </View> */}
-            </View >
-            {(props.navigation) ?
-                <Historybutton title="View history" onPress={() => props.navigation.navigate('history' + signalData.signal_id, { history_items })} />
-                : null}
-        </View >
+                    {(signalData.text ?
+                        <View style={{ marginBottom: 10, paddingHorizontal: 20, }}>
+                            <Text style={{ color: 'rgba(23,31,36,0.7)' }}>{signalData.text}</Text>
+                        </View> : null)}
+                    <View>
+                        {signalData.history_items.map((item, id, arr) => {
 
+                            // const borderStyle = (id + 1 !== arr.length) ? { borderColor: '#efefef', borderBottomWidth: 1 } : null
+                            return (
+                                <View key={id}>
+                                    <View style={[{ justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 10, backgroundColor: 'rgb(245,245,245)', borderBottomRightRadius: 5, borderBottomLeftRadius: 5 }]}>
+                                        <View
+                                            style={{ marginLeft: 0, justifyContent: 'center', alignItems: 'center' }}
+                                        >
+                                            {(item.type === 'take_profit') ?
+                                                <Text semibold style={{ color: '#db25fc', fontSize: 20 }} >Take profit</Text>
+                                                :
+                                                <Text semibold style={{ color: '#1308FE', fontSize: 20 }} >Stop loss</Text>
+                                            }
+                                        </View>
+                                        <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginLeft: 0 }}>
+                                            <Text bold style={{ fontSize: 20, marginLeft: 0 }}>{item.old}</Text>
+                                            <Image style={{ marginHorizontal: 10 }} source={require('../assets/icons/arrow_right.png')} />
+                                            <Text bold style={{ fontSize: 20, marginLeft: 0 }}>{item.new}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            )
+                        })}
+                    </View>
+                </View >
+                {(props.navigation) ?
+                    <HistoryButton title="View history" onPress={() => props.navigation.navigate('history' + signalData.signal_id, { history_items })} />
+                    : null}
+            </View >
+
+        </>
 
     )
 }
@@ -88,17 +79,20 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#ffffff',
         marginHorizontal: 10,
-        marginVertical: 10,
+        marginVertical: 5,
 
         paddingTop: 20,
         borderRadius: 5,
 
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
+        borderWidth: 1,
+        borderColor: 'rgb(200,200,200)',
 
-        elevation: 10
+        // shadowColor: '#000',
+        // shadowOffset: { width: 0, height: 0 },
+        // shadowOpacity: 0.1,
+        // shadowRadius: 10,
+
+        // elevation: 10
     },
     profBox: {
         flexDirection: 'row',

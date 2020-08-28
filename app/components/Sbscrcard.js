@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, View, Image, PixelRatio, ImageBackground } from 'react-native'
+import React, { useState, Component } from 'react'
+import { StyleSheet, View, Image, PixelRatio, ImageBackground, Platform } from 'react-native'
 import { AreaChart, LineChart, Grid } from 'react-native-svg-charts'
 import * as shape from 'd3-shape'
 import { feedAll } from '../config/messages'
-import Btn from './Btn'
+import { SubscrBtn } from './Buttons'
+import { BlurView } from 'expo-blur'
+import Text from './SFText'
 
 const Donecard = (props) => {
 
@@ -18,11 +20,11 @@ const Donecard = (props) => {
 
     let Sellbuytext, chartColor1, minPoint, maxPoint, openPricePosition, currentPricePosition
 
-    const fontColor = '#eeeeee'
+    const fontColor = 'black'
 
     if (signalData.graph.type === 'buy') {
-        Sellbuytext = () => <Text style={{ color: '#f5dbfd' }}>Buy</Text>
-        chartColor1 = '#f5dbfd'
+        Sellbuytext = () => <Text style={{ color: '#7FC37D' }}>Buy</Text>
+        chartColor1 = '#cc26fc'
         maxPoint = signalData.graph.take_profit
         minPoint = signalData.graph.stop_loss
 
@@ -30,8 +32,8 @@ const Donecard = (props) => {
         currentPricePosition = cardWidth * 0.98 * (signalData.graph.current_price - signalData.graph.stop_loss) / (signalData.graph.take_profit - signalData.graph.stop_loss)
 
     } else {
-        Sellbuytext = () => <Text style={{ color: '#cbbeff' }}>Sell</Text>
-        chartColor1 = '#cbbeff'
+        Sellbuytext = () => <Text style={{ color: '#E48181' }}>Sell</Text>
+        chartColor1 = '#4f25fc'
 
         minPoint = signalData.graph.take_profit
         maxPoint = signalData.graph.stop_loss
@@ -46,9 +48,9 @@ const Donecard = (props) => {
 
     if (signalData.done_status === 'profit') {
         profitArrow_style = { resizeMode: 'contain', width: 30, height: 30, transform: [{ rotate: "180deg" }] }
-        last_profit = '+' + ((signalData.graph.take_profit - signalData.graph.open_price) * 100 / signalData.graph.open_price).toFixed(1) + '%'
+        last_profit = '+' + Math.abs((signalData.graph.take_profit - signalData.graph.open_price) * 100 / signalData.graph.open_price).toFixed(1) + '%'
     } else {
-        last_profit = ((signalData.graph.stop_loss - signalData.graph.open_price) * 100 / signalData.graph.open_price).toFixed(1) + '%'
+        last_profit = '-' + Math.abs((signalData.graph.stop_loss - signalData.graph.open_price) * 100 / signalData.graph.open_price).toFixed(1) + '%'
         profitArrow_style = { resizeMode: 'contain', width: 30, height: 30 }
     }
 
@@ -59,112 +61,111 @@ const Donecard = (props) => {
     lastBottom = 100 - 100 * (data[data.length - 1] - min) / (max - min)
 
     const innerColor = 'rgb(' + signalData.market_r_color + ',' + signalData.market_g_color + ',' + signalData.market_b_color + ')'
-    const outerColor = 'rgba(' + signalData.market_r_color + ',' + signalData.market_b_color + ',' + signalData.market_b_color + ',0.2)'
+    const outerColor = 'rgba(' + signalData.market_r_color + ',' + signalData.market_b_color + ',' + signalData.market_b_color + ',1)'
 
     const marketInicator = <View style={[styles.marketIndicator, { backgroundColor: outerColor }]}>
         <View style={[styles.marketIndicatorInner, { backgroundColor: innerColor }]}></View>
     </View>
 
-    console.log(marketInicator)
+
     return (
         <View style={styles.container}>
-            <View style={styles.profBox}>
-                <View style={styles.imgBox}>
-                    <Image style={styles.img} source={{ uri: profile.image }} />
+            <BlurView intensity={Platform.OS === 'ios' ? 60 : 120} tint={'light'} style={{ ...StyleSheet.absoluteFill, zIndex: 2, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20, borderRadius: 5 }}>
+                <View style={styles.lockedBox}>
+                    <Image style={{ width: 50, height: 50 }} source={require('../assets/icons/locked.png')} />
                 </View>
-                <View style={styles.poftitleBox}>
-                    <View style={{ flex: 1 }}><Text style={{ fontWeight: 'bold' }}>{profile.name}</Text></View>
-                    <View style={{ flex: 1 }}><Text style={{ color: fontColor }}>{signalData.time}</Text></View>
-                </View>
-            </View>
-            <View style={{ marginBottom: 10 }}>
-                <Text>{signalData.text}</Text>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                {marketInicator}
-                <Text style={{ fontSize: 25, fontWeight: 'bold' }}>{signalData.graph.name}</Text>
-            </View>
-            <View>
-                <View style={{ ...StyleSheet.absoluteFill, zIndex: 2, alignItems: 'center' }}>
-                    <View style={styles.lockedBox}>
-                        <Image style={{ width: 50, height: 50 }} source={require('../assets/icons/locked.png')} />
+                <Text heavy style={{ fontSize: 26 }}>BUY PREMIUM</Text>
+                <Text light style={{ textAlign: 'center', marginVertical: 10 }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</Text>
+                <SubscrBtn title='Get Started' />
+            </BlurView>
+            <View style={[styles.profileBox, { paddingHorizontal: 20, }]}>
+                <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+                    <View style={styles.imgBox}>
+                        <Image style={styles.img} source={{ uri: profile.image }} />
                     </View>
-                    <Text style={{ fontSize: 30, fontWeight: '700' }}>Buy premium</Text>
-                    <Text style={{ textAlign: 'center', marginVertical: 10 }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</Text>
-                    <Btn title='Get Started' />
-                </View>
-                <View style={{ flexDirection: 'row', marginTop: 5 }}>
-                    <Text style={{ fontWeight: 'bold', color: fontColor }}><Sellbuytext /> under</Text>
-                    <Image source={require('../assets/342.png')} style={{ height: 17, width: 40 }} />
-                </View>
-                <View style={{ justifyContent: 'flex-end' }}>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ fontWeight: 'bold', color: fontColor }}>Take profit</Text>
-                        <Image source={require('../assets/342.png')} style={{ height: 17, width: 40 }} />
+                    <View style={styles.poftitleBox}>
+                        <View style={{ flex: 1, justifyContent: 'flex-end' }}><Text semibold>{profile.name}</Text></View>
+                        <View style={{ flex: 1 }}><Text style={{ color: 'grey' }}>{signalData.time}</Text></View>
                     </View>
-                    <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ fontWeight: 'bold', color: fontColor }}>Stop loss</Text>
-                        <Image source={require('../assets/342.png')} style={{ height: 17, width: 40 }} />
+                </View>
+                {signalData.text ?
+                    <View style={{ marginBottom: 0 }}>
+                        <Text style={{ color: 'rgb(170,178,183)', textAlign: 'justify', color: 'rgba(23,31,36,0.7)' }}>{signalData.text}</Text>
+                    </View>
+                    : null}
+            </View>
+            <View style={{
+                backgroundColor: 'white',
+                borderBottomLeftRadius: 5,
+                borderBottomRightRadius: 5,
+                backgroundColor: 'rgb(245,245,245)'
+            }}>
+                <View style={{}}>
+                    <View style={[{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 10, backgroundColor: 'rgb(245,245,245)' }]} >
+                        <Text semibold style={{ fontSize: 17 }}>{signalData.graph.name}</Text>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Sellbuytext />
+                            <View style={{ flexDirection: 'row', marginLeft: 10 }}>
+                                {/* <Text style={{ position: 'relative', top: 6, color: 'rgba(23,31,36,0.7)' }}>Under</Text> */}
+                                <Text semibold style={{ fontSize: 17 }}>{signalData.graph.open_price}</Text>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={{ paddingHorizontal: 10, paddingVertical: 10, backgroundColor: 'white' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', paddingTop: 0 }}>
+                            {/* {marketInicator} */}
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <View>
+                                <Text style={{ fontSize: 17, color: 'rgba(23,31,36,0.7)' }}>take profit:
+                                <Text semibold style={{ fontSize: 17, color: 'rgb(23,31,36)' }}> {signalData.graph.take_profit}</Text>
+                                </Text>
+                            </View>
+                            <View>
+                                <Text style={{ fontSize: 17, color: 'rgba(23,31,36,0.7)' }}>stop loss:
+                                <Text semibold style={{ fontSize: 17, color: 'rgb(23,31,36)' }}> {signalData.graph.stop_loss}</Text>
+                                </Text>
+                            </View>
+                        </View>
                     </View>
                 </View>
 
-                <View style={{ height: 150, backgroundColor: '#ffffff' }}>
+                <View style={{ height: 150, backgroundColor: '#ffffff', paddingHorizontal: 20, paddingVertical: 10, backgroundColor: 'rgb(245,245,245)' }}>
                     <View >
-                        {/* <View style={Object.assign({}, styles.price, { top: lastBottom })}><Text style={{ color: fontColor }}>{signalData.graph.current_price}</Text></View> */}
+                        <View style={Object.assign({}, styles.price, { top: lastBottom })}><Text semibold>{signalData.graph.current_price}</Text></View>
 
-                        <View style={{ position: 'absolute', height: '100%', width: '100%', left: -20, zIndex: 1 }}>
+                        <View style={{ position: 'relative', height: '100%', width: '100%', left: -0, zIndex: 1, backgroundColor: 'rgb(245,245,245)' }}>
                             <LineChart
-                                style={{ height: 150 }}
+                                style={{ height: 150, position: 'relative', left: -20 }}
                                 data={data}
                                 curve={shape.curveNatural}
                                 svg={{ stroke: chartColor1, strokeWidth: 5 }}
                                 contentInset={{ top: 20, bottom: 20 }}
                                 showGrid={false}
                                 numberOfTicks={0}
+                                key={props.id}
                             >
-                                <Grid />
+
                             </LineChart>
                         </View>
 
-                        <View style={{ position: 'absolute', height: '100%', width: '100%', left: -20, top: 7 }}>
+                        <View style={{ position: 'absolute', height: '100%', width: '100%', left: 0, top: 7, zIndex: 1 }}>
                             <LineChart
-                                style={{ height: 150 }}
+                                style={{ height: 150, position: 'relative', left: -20 }}
                                 data={data}
                                 curve={shape.curveNatural}
-                                svg={{ stroke: '#f9f4fb', strokeWidth: 7 }}
+                                svg={{ stroke: 'rgba(204, 38, 252,0.2)', strokeWidth: 7 }}
                                 contentInset={{ top: 20, bottom: 20 }}
                                 showGrid={false}
                                 numberOfTicks={0}
+                                key={1000 + props.id}
                             >
-                                <Grid />
                             </LineChart>
                         </View>
 
                     </View>
                 </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <View style={{ marginLeft: 10 }}>
-                        <View style={{ position: 'relative', top: 7, left: 1 }}>
-                            <Text style={{ color: fontColor }}>Current price</Text>
-                        </View>
-                        <View>
-                            <Image source={require('../assets/342.png')} style={{ height: 40, width: 80 }} />
-                        </View>
-                        {/* <View style={{ position: 'relative', bottom: 7, left: 3, flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
-                            {(priceDiff > 0) ?
-
-                                <View style={[{ position: 'relative', top: 3, height: 10, width: 10, borderTopWidth: 3, borderRightWidth: 3, borderColor: 'rgba(19,8,254,0.3)' }, { transform: [{ rotateZ: "-45deg" }] }]} />
-                                :
-                                <View style={[{ position: 'relative', bottom: 3, height: 10, width: 10, borderTopWidth: 3, borderRightWidth: 3, borderColor: 'rgba(19,8,254,0.3)' }, { transform: [{ rotateZ: "135deg" }] }]} />
-                            }
-                            <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'relative' }} />
-                        </View> */}
-                    </View>
-
-
-                </View>
-
-                <View style={{ marginTop: 30, height: 50, marginHorizontal: 10 }}
+                <View style={{ marginTop: 20, height: 40, marginHorizontal: 30, backgroundColor: 'rgb(245,245,245)' }}
                     onLayout={(e) => { setCardWidth(e.nativeEvent.layout.width) }}
                 >
                     <View style={{ backgroundColor: '#deddff', height: 2 }}></View>
@@ -175,7 +176,7 @@ const Donecard = (props) => {
                                 <View style={styles.dotInner}></View>
                             </View>
                             <View style={{ position: 'relative', right: '40%' }}>
-                                <Image source={require('../assets/342.png')} style={{ height: 17, width: 40 }} />
+                                <Text semibold style={{ fontSize: 12, }}>{minPoint.toFixed(2)}</Text>
                             </View>
                         </View>
                     </View>
@@ -184,25 +185,23 @@ const Donecard = (props) => {
                             <View style={styles.dot}>
                                 <View style={styles.dotInner}></View>
                             </View>
-                            <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'relative', right: '40%' }} />
+                            <Text semibold style={{ fontSize: 12, position: 'relative', right: '40%' }}>{signalData.graph.open_price.toFixed(2)}</Text>
                         </View>
                     </View>
                     <View style={{ alignItems: 'center', position: 'absolute', left: 0 + cardWidth, zIndex: 1 }}>
                         <View style={{ position: 'relative' }}>
-                            <View style={styles.dot}>
-                                <View style={styles.dotInner}></View>
+                            <View style={{ position: 'relative' }}>
+                                <View style={styles.dot}>
+                                    <View style={styles.dotInner}></View>
+                                </View>
+                                <Text semibold style={{ fontSize: 12, position: 'relative', right: '70%' }}>{maxPoint.toFixed(2)}</Text>
                             </View>
-                            <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'relative', right: '40%' }} />
-
                         </View>
                     </View>
-
-
-
                     <View style={{ alignItems: 'center', position: 'absolute', left: currentPricePosition, top: -1, zIndex: 2 }}>
                         <View style={{ position: 'relative' }}>
                             <View style={styles.doto}></View>
-                            <Image source={require('../assets/342.png')} style={{ height: 17, width: 40, position: 'relative', right: '40%', top: -35 }} />
+                            <Text semibold style={{ fontSize: 12, position: 'relative', right: '40%', top: -35 }}>{signalData.graph.current_price.toFixed(2)}</Text>
                         </View>
                     </View>
                 </View>
@@ -217,17 +216,18 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#ffffff',
         marginHorizontal: 10,
-        marginVertical: 10,
-        paddingHorizontal: 20,
+        marginVertical: 5,
         paddingTop: 20,
         borderRadius: 5,
 
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
+        borderWidth: 1,
+        borderColor: 'rgb(200,200,200)',
 
-        elevation: 5
+        // shadowColor: '#000',
+        // shadowOffset: { width: 0, height: 0 },
+        // shadowOpacity: 0.1,
+        // shadowRadius: 10,
+        // elevation: 5
     },
     profBox: {
         flexDirection: 'row',
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
         width: 12,
         height: 12,
         borderRadius: 15,
-        backgroundColor: 'rgba(204, 38, 252,0.3)',
+        backgroundColor: 'rgba(204, 38, 252,1)',
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
         width: 9,
         height: 9,
         borderRadius: 15,
-        backgroundColor: 'rgba(50, 14, 253,0.3)',
+        backgroundColor: 'rgba(50, 14, 253,1)',
         justifyContent: 'center',
         alignItems: 'center'
     },
@@ -322,8 +322,8 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 4,
 
-        marginTop: 30,
-        marginBottom: 10,
+        marginTop: 0,
+        marginBottom: 30,
         height: 70,
         width: 70,
         borderRadius: 70,

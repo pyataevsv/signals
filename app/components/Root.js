@@ -1,88 +1,122 @@
 import 'react-native-gesture-handler'
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Button, Image, SafeAreaView, StatusBar } from 'react-native'
+import React, { useEffect, useRef } from 'react'
+import { StyleSheet, Image, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native'
 import * as actionCreators from '../reducers/actionCreators'
-import { Provider, connect } from 'react-redux'
+import { connect } from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native'
-import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { FeedStack } from './Feedstack'
-import { Signup } from './Signup'
 import Stats from './Stats'
-import Header from './Header'
+
+import Setscreen from './Setscreen'
+import { createStackNavigator } from '@react-navigation/stack'
+import WelcomeScreen from './WelcomeScreen'
+import Premiumscreen from './Premiumscreen'
+import Brokerpromo from './Brokerpromo'
+import Buyoptscreen from './Buyoptscreen'
+
+import * as Analytics from 'expo-firebase-analytics'
 
 
-function Settings(props) {
-
+function TabNavigator(props) {
     return (
-        <View style={{ flex: 1 }}>
-            <View style={{ flex: 1, justifyContent: 'center' }}>
-                <Signup />
-            </View >
-        </View>
+        <Tab.Navigator
+            tabBarOptions={{
+                style: {
+                    borderTopWidth: 1,
+                    borderTopColor: 'rgb(200,200,200)'
+                },
+            }}
+            // initialRouteName="Feed"
+            initialRouteName="Stats"
+        >
+            <Tab.Screen
+                name='Feed'
+                component={FeedStack}
+                options={({ route }) => ({
+                    tabBarIcon: ({ focused, color }) => {
+                        let iconPath = (focused) ? require('../assets/icons/feed.png') : require('../assets/icons/feed_black.png')
+                        return <Image style={styles.tabIcon} source={iconPath} />
+                    },
+                    title: route.name,
+                })}
+
+            />
+            <Tab.Screen
+                name='Stats'
+                component={Stats}
+                options={({ route }) => ({
+                    tabBarIcon: ({ focused, color }) => {
+                        let iconPath = (focused) ? require('../assets/icons/stats_a.png') : require('../assets/icons/stats.png')
+                        return <Image style={styles.tabIcon} source={iconPath} />
+                    },
+                    title: 'Stats'
+
+                })}
+
+            />
+            <Tab.Screen
+                name='Setscreen'
+                component={Setscreen}
+                options={({ route }) => ({
+                    tabBarIcon: ({ focused, color }) => {
+                        let iconPath = (focused) ? require('../assets/icons/settings_a.png') : require('../assets/icons/settings.png')
+                        return <Image style={styles.tabIcon} source={iconPath} />
+                    },
+                    title: route.name
+
+                })}
+            />
+        </Tab.Navigator>
     )
 }
 
-const Drawer = createBottomTabNavigator();
+const Tab = createBottomTabNavigator()
+const WelcomeStack = createStackNavigator()
 
 
-function Root({ fetchAll }) {
+function Root({ fetchAll, fetchALLWithClear, api_key, firstEnter, fontLoad }) {
+    const keyRef = useRef('bonjour')
+    const routeNameRef = React.useRef()
+    const navigationRef = React.useRef()
+    console.log(fontLoad)
 
-    const [fetching, setFetchingStatus] = useState(true)
 
     useEffect(() => {
-        if (fetching) {
-            setFetchingStatus(false)
-            fetchAll({ limit: 10, page: 1, key: '6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP' })//
+        if (keyRef.current != api_key) {
+            keyRef.current = api_key
+            fetchALLWithClear({ limit: 10, page: 1, key: api_key }, -1)
+
         }
     })
+    console.log(fontLoad)
 
     return (
-
-        <NavigationContainer >
+        <NavigationContainer
+            ref={navigationRef}
+            onReady={() => routeNameRef.current = navigationRef.current.getCurrentRoute().name}
+            onStateChange={() => {
+                const previousRouteName = routeNameRef.current;
+                const currentRouteName = navigationRef.current.getCurrentRoute().name
+                if (previousRouteName !== currentRouteName) {
+                    Analytics.setCurrentScreen(currentRouteName);
+                }
+                routeNameRef.current = currentRouteName;
+            }}
+        >
             <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight || 0 }}>
-                <Drawer.Navigator
-                    initialRouteName="Feed"
+                <WelcomeStack.Navigator
+                // mode='modal'
                 >
-                    <Drawer.Screen
-                        name='Feed'
-                        component={FeedStack}
-                        options={({ route }) => ({
-                            tabBarIcon: ({ focused, color }) => {
-                                let iconPath = (focused) ? require('../assets/icons/feed.png') : require('../assets/icons/feed_black.png')
-                                return <Image style={styles.tabIcon} source={iconPath} />
-                            },
-                            title: route.name
-
-                        })}
-                    />
-                    <Drawer.Screen
-                        name='Stats'
-                        component={Stats}
-                        options={({ route }) => ({
-                            tabBarIcon: ({ focused, color }) => {
-                                let iconPath = (focused) ? require('../assets/icons/stats1_active.png') : require('../assets/icons/stats1.png')
-                                return <Image style={styles.tabIcon} source={iconPath} />
-                            },
-                            title: route.name
-
-                        })}
-
-                    />
-                    <Drawer.Screen
-                        name='Settings'
-                        component={Settings}
-                        options={({ route }) => ({
-                            tabBarIcon: ({ focused, color }) => {
-                                let iconPath = (focused) ? require('../assets/icons/set_active.png') : require('../assets/icons/fill5.png')
-                                return <Image style={styles.tabIcon} source={iconPath} />
-                            },
-                            title: route.name
-
-                        })}
-                    />
-                </Drawer.Navigator>
+                    {/* {firstEnter ? <WelcomeStack.Screen name='WelcomeScreen' component={WelcomeScreen} /> : null} */}
+                    {/* <WelcomeStack.Screen options={{ headerShown: false }} name='WelcomeScreen' component={WelcomeScreen} /> */}
+                    <WelcomeStack.Screen options={{ headerShown: false }} name='TabNavigator' component={TabNavigator} />
+                    <WelcomeStack.Screen options={{ title: '' }} name="Premiumscreen" component={Premiumscreen} />
+                    <WelcomeStack.Screen options={{ title: '' }} name="Brokerpromo" component={Brokerpromo} />
+                    <WelcomeStack.Screen options={{ title: '' }} name="Buyoptscreen" component={Buyoptscreen} />
+                </WelcomeStack.Navigator>
             </SafeAreaView>
+
         </NavigationContainer>
 
     )
@@ -112,12 +146,17 @@ const styles = StyleSheet.create({
 
 Root = connect(
     //mapStateToProp
-    null,
+    (state) => {
+        return {
+            api_key: state.loginState.loginData.key,
+            fontLoad: state.fontLoadState
+        }
+    },
 
     //mapDispatchToProp
     (dispatch) => {
         return {
-            fetchAll: (e) => dispatch(actionCreators.fetchALL(e)),
+            fetchALLWithClear: (x, y) => dispatch(actionCreators.fetchALLWithClear(x, y)),
         }
         //6MHcOk1qs2SPAvVyUeoj8zMFQQSW66AocxQkzDNvdsHfoH9TdUOeI83JIcpeWelP
     }

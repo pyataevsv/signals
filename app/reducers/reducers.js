@@ -14,12 +14,35 @@ const initialState = {
             history_items: [],
             page_info: {}
         }
-    }
+    },
+    loginState: {
+        loginError: '',
+        isLoginFetching: false,
+        loginData: {
+            is_authorized: false,
+            key: '',
+            fname: '',
+            lname: '',
+            email: ''
+        }
+    },
+    fontLoadState: 'loading'
 }
+
+
+
+////////////////    FEED STATE     ///////////////
 
 function isFetchinReducer(state, action) {
     if (action.type === actions.IS_FETCHING) {
         return action.isFetching
+    }
+    return state
+}
+
+function fontLoadReducer(state, action) {
+    if (action.type === actions.FONT_LOAD) {
+        return action.status
     }
     return state
 }
@@ -58,21 +81,68 @@ function refreshFeedCashReducer(state, action) {
     }
     return state
 }
+////////////////    LOGIN STATE    ///////////////
+
+function isLoginFetchinReducer(state, action) {
+    if (action.type === actions.IS_LOGIN_FETCHING) {
+        return action.isFetching
+    }
+    return state
+}
+
+function loginErrorReducer(state, action) {
+    if (action.type === actions.SET_LOGIN_ERROR) {
+        return action.text
+    }
+    return state
+}
+
+function loginDataReducer(state, action) {
+
+    if (action.type === actions.SET_LOGIN_DATA) {
+
+        return {
+            is_authorized: true,
+            key: action.feed.key,
+            fname: action.feed.fname,
+            lname: action.feed.lname,
+            email: action.feed.email
+        }
+    }
+    if (action.type === actions.LOG_OUT) {
+
+        return {
+            is_authorized: false,
+            key: '',
+            fname: '',
+            lname: '',
+            email: ''
+        }
+    }
+    return state
+}
 
 
 
+////////////////    ROOT REDUCER   //////////////////
 
 export const rootReducer = function (state = initialState, action) {
+    console.log(action.type)
     return {
         feedAll: {
             data: fetchAllreducer(state.feedAll.data, action),
             isFetching: isFetchinReducer(state.feedAll.isFetching, action),
             feedCash: refreshFeedCashReducer(state.feedAll.feedCash, action),
             fetchErr: fetchErrReducer(state.feedAll.fetchErr, action)
-        }
+        },
+        loginState: {
+            isLoginFetching: isLoginFetchinReducer(state.loginState.isLoginFetching, action),
+            loginError: loginErrorReducer(state.loginState.loginError, action),
+            loginData: loginDataReducer(state.loginState.loginData, action)
+        },
+        fontLoadState: fontLoadReducer(state.fontLoadState, action)
     }
 }
 
 
-// export const rootReducer = combineReducers({ counter: countReducer, status: statusReducer })
 

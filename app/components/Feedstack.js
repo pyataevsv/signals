@@ -2,7 +2,7 @@
 import 'react-native-gesture-handler'
 import { createStackNavigator } from '@react-navigation/stack'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { StyleSheet } from 'react-native'
 import * as actionCreators from '../reducers/actionCreators'
 import { connect } from 'react-redux'
@@ -14,11 +14,10 @@ import Feed from './Feed'
 const Stack = createStackNavigator()
 
 export function FeedStack(props) {
-
     return (
         <Stack.Navigator
             screenOptions={({ route }) => {
-                if (route.name === 'FeedStack') {
+                if (route.name === 'Feed') {
                     return {
                         headerShown: false,
                     }
@@ -28,12 +27,12 @@ export function FeedStack(props) {
                     }
                 } else {
                     return {
-                        title: ''
+                        title: 'Title'
                     }
                 }
             }}
         >
-            <Stack.Screen name="FeedStack" component={Feed} />
+            <Stack.Screen name="Feed" component={Feed} />
             {('messages' in props.feedAll) ?
 
                 [...new Set(props.feedAll.messages.filter(i => (i.type === 'history' || i.type === 'message')).map((i, f, arr) =>

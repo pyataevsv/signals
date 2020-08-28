@@ -1,13 +1,28 @@
 import * as actions from './actions'
+import AsyncStorage from '@react-native-community/async-storage';
 
-export function asyncAddCounter() {
+const setStorageObj = async (value) => {
 
-    return (dispatch) => {
-        dispatch(setAsyncStatus('PROGRESS'))
-        setTimeout(() => {
-            dispatch(addCounter())
-            dispatch(setAsyncStatus('DONE'))
-        }, 2000);
+    const jsonValue = JSON.stringify(value)
+    try {
+        await AsyncStorage.setItem('login_storage', jsonValue)
+    } catch (e) {
+
+    }
+}
+
+const removeLoginStorage = async () => {
+    try {
+        await AsyncStorage.removeItem('login_storage')
+        let a = await AsyncStorage.getItem('login_storage')
+    } catch (e) {
+        // remove error
+    }
+}
+export function fontLoad(status) {
+    return {
+        type: actions.FONT_LOAD,
+        status
     }
 }
 
@@ -34,29 +49,28 @@ export function fetchALL({ limit = '', page = '', key = '' }) {
 
 
 
-
     return (dispatch) => {
 
         dispatch(isFetching(true))
         dispatch(fetchErr(false))
-        setTimeout(() => {
-            fetch(url)
-                .then(resp => {
-                    dispatch(isFetching(false))
-                    if (!resp.ok) {
-                        throw new Error(resp.statusText)
-                    }
-                    return resp
-                })
-                .then(resp => resp.json())
-                .then(feed => {
-                    dispatch(fetchAllSuccess(feed))
-                    dispatch(refreshFeedCash(feed))
-                })
-                .catch(err => {
-                    dispatch(fetchErr(true))
-                })
-        }, 1000);
+        // setTimeout(() => {
+        fetch(url, { mode: 'no-cors' })
+            .then(resp => {
+                dispatch(isFetching(false))
+                if (!resp.ok) {
+                    throw new Error(resp.statusText)
+                }
+                return resp
+            })
+            .then(resp => resp.json())
+            .then(feed => {
+                dispatch(fetchAllSuccess(feed))
+                dispatch(refreshFeedCash(feed))
+            })
+            .catch(err => {
+                dispatch(fetchErr(true))
+            })
+        // }, 1000);
     }
 }
 
@@ -69,34 +83,34 @@ export function fetchALLWithClear({ limit = '', page = '', key = '' }, total_lin
     if (!!page) url = url + 'page=' + page + '&'
     if (!!key) url = url + 'key=' + key + '&'
 
-    console.log('wtf')
+
+
     return (dispatch) => {
 
         dispatch(isFetching(true))
         dispatch(fetchErr(false))
-        setTimeout(() => {
-            fetch(url)
-                .then(resp => {
-                    dispatch(isFetching(false))
-                    if (!resp.ok) {
-                        throw new Error(resp.statusText)
-                    }
-                    return resp
-                })
-                .then(resp => resp.json())
-                .then(feed => {
-                    if (feed.page_info.total_lines != total_lines) {
-                        console.log('go')
-                        dispatch(clearCash())
-                        dispatch(fetchAllSuccess(feed))
-                        dispatch(refreshFeedCash(feed))
-                    }
+        // setTimeout(() => {
+        fetch(url, { mode: 'no-cors' })
+            .then(resp => {
+                dispatch(isFetching(false))
+                if (!resp.ok) {
+                    throw new Error(resp.statusText)
+                }
+                return resp
+            })
+            .then(resp => resp.json())
+            .then(feed => {
+                if (feed.page_info.total_lines != total_lines) {
+                    dispatch(clearCash())
+                    dispatch(fetchAllSuccess(feed))
+                    dispatch(refreshFeedCash(feed))
+                }
 
-                })
-                .catch(err => {
-                    dispatch(fetchErr(true))
-                })
-        }, 1000);
+            })
+            .catch(err => {
+                dispatch(fetchErr(true))
+            })
+        // }, 1000);
     }
 }
 
@@ -119,3 +133,123 @@ export function clearCash() {
         type: actions.CLEAR_CASH
     }
 }
+//////////////////////////////// LOGIN
+
+
+export function isLoginFetching(isFetching) {
+    return {
+        type: actions.IS_LOGIN_FETCHING,
+        isFetching
+    }
+}
+
+export function setLoginError(text) {
+    return {
+        type: actions.SET_LOGIN_ERROR,
+        text
+    }
+}
+export function setLoginData(Feed) {
+
+    return {
+        type: actions.SET_LOGIN_DATA,
+        feed: Feed
+    }
+}
+export function logOut() {
+    removeLoginStorage()
+    return {
+        type: actions.LOG_OUT
+    }
+}
+
+
+export function signUpRequest({ fname = '', lname = '', email = '', password = '', password2 = '' }) {
+
+    let url = 'http://148.251.195.78:99/app/signup'
+
+    if (!!fname || !!lname || !!email || !!password || !!password2) url = url + '?'
+    if (!!fname) url = url + 'fname=' + fname + '&'
+    if (!!lname) url = url + 'lname=' + lname + '&'
+    if (!!email) url = url + 'email=' + email + '&'
+    if (!!password) url = url + 'password=' + password + '&'
+    if (!!password2) url = url + 'password2=' + password2 + '&'
+
+    return (dispatch) => {
+
+        dispatch(isLoginFetching(true))
+        dispatch(setLoginError(''))
+
+        fetch(url)
+            .then(resp => {
+                dispatch(isLoginFetching(false))
+                if (!resp.ok) {
+                    throw new Error(resp.statusText)
+                }
+                return resp
+            })
+            .then(resp => resp.json())
+            .then(feed => {
+                if (feed.error) {
+                    dispatch(setLoginError(feed.result))
+                } else {
+                    //set login state
+                    dispatch(setLoginData(feed.result))
+                    setStorageObj(feed.result)
+                }
+            })
+            .catch(err => {
+                // dispatch(fetchErr(true))
+            })
+
+    }
+}
+
+
+export function logInRequest({ email = '', password = '' }) {
+
+    let url = 'http://148.251.195.78:99/app/signin'
+
+    if (!!email || !!password) url = url + '?'
+    if (!!email) url = url + 'email=' + email + '&'
+    if (!!password) url = url + 'password=' + password + '&'
+
+    return (dispatch) => {
+
+        dispatch(isLoginFetching(true))
+        dispatch(setLoginError(''))
+        setTimeout(() => {
+
+
+            fetch(url)
+                .then(resp => {
+                    dispatch(isLoginFetching(false))
+
+                    if (!resp.ok) {
+
+                        throw new Error(resp.statusText)
+                    }
+                    return resp
+                })
+                .then(resp => resp.json())
+                .then(feed => {
+
+                    if (feed.error) {
+                        dispatch(setLoginError(feed.result))
+                    } else {
+                        //set login state
+
+                        dispatch(setLoginData(feed.result))
+                        setStorageObj(feed.result)
+                    }
+
+                })
+                .catch(err => {
+                    // dispatch(fetchErr(true))
+                })
+        }, 1000);
+
+    }
+}
+
+

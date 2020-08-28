@@ -1,14 +1,23 @@
 
 
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { WebView } from 'react-native-webview'
-
+import Text from './SFText'
 
 function Historyscreen(props) {
 
     const uri = props.route.params.link
-    console.log(props.route.name)
+
+    React.useEffect(() => {
+        const unsubscribe = props.navigation.addListener('blur', () => {
+
+            props.navigation.push('Feed')
+            props.navigation.popToTop()
+        });
+
+        return unsubscribe
+    }, [props.navigation])
 
     return (
         <View style={{ flex: 1 }}>

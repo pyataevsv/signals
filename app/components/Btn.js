@@ -1,6 +1,7 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
+import { StyleSheet, View, TouchableHighlight } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
+import Text from './SFText'
 
 function Btn(props) {
     return (

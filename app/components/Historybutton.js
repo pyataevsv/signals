@@ -1,44 +1,42 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableHighlight, Image } from 'react-native'
+import { StyleSheet, View, TouchableHighlight, Image } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-
+import Text from './SFText'
 function Btn(props) {
     return (
-        <TouchableHighlight style={styles.touch} onPress={() => (props.onPress) ? props.onPress() : null}>
-            <LinearGradient
-                // colors={['#db25fc', '#9526fc']}
-                colors={['grey', 'grey']}
-                start={[0, 0]}
-                end={[1, 0]}
-                style={styles.gradient}
-            >
+        <View style={styles.elevation}>
+            <TouchableHighlight underlayColor={'rgba(250,250,250,0.5)'} style={styles.touch} onPress={() => (props.onPress) ? props.onPress() : null}>
                 <View style={styles.button}>
                     <Text style={styles.text}>{props.title}</Text>
-                    <Image source={require('../assets/icons/arrow_right.png')} />
+                    <Image style={{ width: 20, height: 30 }} source={require('../assets/icons/key_arrow_right.png')} />
                 </View>
-            </LinearGradient>
-        </TouchableHighlight>
+            </TouchableHighlight>
+        </View>
     )
 }
 
 export default Btn
 
 const styles = StyleSheet.create({
+    elevation: {
+        borderTopWidth: 1,
+        borderColor: 'rgb(222,222,222)'
+
+    },
     touch: {
         alignSelf: 'center',
         width: '100%',
+
     },
 
     button: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: "transparent",
-        marginVertical: 1,
-        marginHorizontal: 1,
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: 'white'
+
+
     },
     text: {
         fontSize: 16,

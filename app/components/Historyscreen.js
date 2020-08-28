@@ -1,20 +1,31 @@
 
 
 import React, { useState, useReducer } from 'react'
-import { StyleSheet, Text, View, Button, Image, ScrollView, TouchableWithoutFeedback } from 'react-native'
+import { StyleSheet, View, Button, Image, ScrollView, TouchableWithoutFeedback } from 'react-native'
 import { connect } from 'react-redux'
 import Signalcard from './Signalcard'
 import Subscrcard from './Sbscrcard'
 import Donecard from './Donecard'
 import Historycard from './Historycard'
+import Text from './SFText'
 
 
 function Historyscreen(props) {
 
+    React.useEffect(() => {
+        const unsubscribe = props.navigation.addListener('blur', () => {
+
+            props.navigation.push('Feed')
+            props.navigation.popToTop()
+        });
+
+        return unsubscribe
+    }, [props.navigation])
+
     const items = props.route.params.history_items
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: 'white' }}>
             <ScrollView style={styles.view}>
                 {
                     (items) ?

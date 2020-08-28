@@ -17,10 +17,29 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mightio.signal",
+      "googleServicesFile": "./GoogleService-Info.plist"
+    },
+    "android": {
+      "package": "com.mightio.signal",
+      "googleServicesFile": "./google-services.json"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "config": {
+        "firebase": {
+          "apiKey": "AIzaSyAK9r4Z2gdLq_SUla-0t44E9Em_v4QhJEE",
+          "authDomain": "signal-847c2.firebaseapp.com",
+          "databaseURL": "https://signal-847c2.firebaseio.com",
+          "projectId": "signal-847c2",
+          "storageBucket": "signal-847c2.appspot.com",
+          "messagingSenderId": "873038382982",
+          "appId": "1:873038382982:web:dbb8bf45c99c521a0e0e07",
+          "measurementId": "G-N296DCM9DS"
+        }
+      }
+    },
+    "description": "First try"
   }
 }

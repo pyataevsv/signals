@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>873038382982-hc0lhaigpfjt0akqjlsof0ho8cf1h999.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.873038382982-hc0lhaigpfjt0akqjlsof0ho8cf1h999</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB_cgkDPC1rbjz0CP_w-zxAYYH77nWP-mg</string>
+	<key>GCM_SENDER_ID</key>
+	<string>873038382982</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.mightio.signal</string>
+	<key>PROJECT_ID</key>
+	<string>signal-847c2</string>
+	<key>STORAGE_BUCKET</key>
+	<string>signal-847c2.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:873038382982:ios:9f0bc33fbed41a600e0e07</string>
+	<key>DATABASE_URL</key>
+	<string>https://signal-847c2.firebaseio.com</string>
+</dict>
+</plist>

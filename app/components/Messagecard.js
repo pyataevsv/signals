@@ -1,6 +1,7 @@
 import React from 'react'
-import { View, Text, Image, StyleSheet } from 'react-native'
-import MessageButton from './MessageButton'
+import { View, Image, StyleSheet } from 'react-native'
+import { MessageButton } from './Buttons'
+import Text from './SFText'
 
 export default function Messagecard(props) {
     let signalData = props.signalData
@@ -20,15 +21,17 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: '#ffffff',
         marginHorizontal: 10,
-        marginVertical: 10,
+        marginVertical: 5,
         borderRadius: 5,
+        // borderWidth: 1,
+        // borderColor: 'rgb(200,200,200)',
 
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.1,
         shadowRadius: 10,
 
-        elevation: 5,
+        elevation: 10,
     },
 
 })
