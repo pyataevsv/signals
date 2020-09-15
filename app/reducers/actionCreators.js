@@ -38,6 +38,12 @@ export function fetchErr(fetchErr) {
         fetchErr
     }
 }
+export function fetchErrText(fetchErrText) {
+    return {
+        type: actions.FETCH_ERR_TEXT,
+        fetchErrText
+    }
+}
 
 export function fetchALL({ limit = '', page = '', key = '' }) {
     let url = 'http://148.251.195.78:99/app/all'
@@ -58,6 +64,7 @@ export function fetchALL({ limit = '', page = '', key = '' }) {
             .then(resp => {
                 dispatch(isFetching(false))
                 if (!resp.ok) {
+                    dispatch(fetchErrText(JSON.stringify(resp)))
                     throw new Error(resp.statusText)
                 }
                 return resp
@@ -68,6 +75,8 @@ export function fetchALL({ limit = '', page = '', key = '' }) {
                 dispatch(refreshFeedCash(feed))
             })
             .catch(err => {
+                dispatch(isFetching(false))
+                dispatch(fetchErrText('errrrr'))
                 dispatch(fetchErr(true))
             })
         // }, 1000);
@@ -89,28 +98,29 @@ export function fetchALLWithClear({ limit = '', page = '', key = '' }, total_lin
 
         dispatch(isFetching(true))
         dispatch(fetchErr(false))
-        // setTimeout(() => {
+        //dispatch(fetchErrText('oshibochka'))
         fetch(url, { mode: 'no-cors' })
             .then(resp => {
                 dispatch(isFetching(false))
                 if (!resp.ok) {
+                    dispatch(fetchErrText(JSON.stringify(resp)))
                     throw new Error(resp.statusText)
                 }
                 return resp
             })
             .then(resp => resp.json())
             .then(feed => {
-                if (feed.page_info.total_lines != total_lines) {
-                    dispatch(clearCash())
-                    dispatch(fetchAllSuccess(feed))
-                    dispatch(refreshFeedCash(feed))
-                }
+
+                dispatch(clearCash())
+                dispatch(fetchAllSuccess(feed))
+                dispatch(refreshFeedCash(feed))
 
             })
             .catch(err => {
+                dispatch(isFetching(false))
+                dispatch(fetchErrText('errrrr'))
                 dispatch(fetchErr(true))
             })
-        // }, 1000);
     }
 }
 
@@ -149,6 +159,8 @@ export function setLoginError(text) {
         text
     }
 }
+
+
 export function setLoginData(Feed) {
 
     return {
@@ -199,7 +211,7 @@ export function signUpRequest({ fname = '', lname = '', email = '', password = '
                 }
             })
             .catch(err => {
-                // dispatch(fetchErr(true))
+                dispatch(setLoginError('Service error, please try later'))
             })
 
     }
@@ -245,10 +257,18 @@ export function logInRequest({ email = '', password = '' }) {
 
                 })
                 .catch(err => {
-                    // dispatch(fetchErr(true))
+                    dispatch(setLoginError('Service error, please try later'))
                 })
         }, 1000);
 
+    }
+}
+
+
+export function setPlanRecept(json) {
+    return {
+        type: actions.SET_ACTIVE_PLAN,
+        json
     }
 }
 

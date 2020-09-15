@@ -119,7 +119,8 @@ const SubStyles = StyleSheet.create({
 export function LoginButton(props) {
     let gradient, border, whiteStyle = {}, roundStyle = {}
 
-    gradient = ['#9025FC', '#1308FE']
+
+    gradient = props.google ? ['#3283fc', '#3283fc'] : ['#9025FC', '#1308FE']
 
     if (props.white) {
         gradient = ['white', 'white']
@@ -151,7 +152,12 @@ export function LoginButton(props) {
                 style={[LoginStyles.gradient, whiteStyle.gradient, roundStyle.gradient]}
             >
                 <View style={[LoginStyles.button, roundStyle.gradient]}>
-                    {!props.fetching ? <Text semibold style={[LoginStyles.text, whiteStyle.text]}>{props.title}</Text> : <ActivityIndicator />}
+
+                    {(props.google && !props.fetching) ? <Image style={{ marginRight: 20 }} source={require('../assets/icons/google.png')} /> : null}
+                    {props.fetching ? <ActivityIndicator color="white" /> :
+                        <Text semibold style={[LoginStyles.text, whiteStyle.text]}>{props.title}</Text>
+                    }
+
 
                 </View>
             </LinearGradient>
@@ -170,6 +176,8 @@ const LoginStyles = StyleSheet.create({
         borderRadius: 0
     },
     button: {
+        flexDirection: 'row',
+        justifyContent: 'center',
         alignItems: "center",
         backgroundColor: "transparent",
         paddingVertical: 10,

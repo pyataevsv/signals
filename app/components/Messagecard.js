@@ -23,15 +23,15 @@ const styles = StyleSheet.create({
         marginHorizontal: 10,
         marginVertical: 5,
         borderRadius: 5,
-        // borderWidth: 1,
-        // borderColor: 'rgb(200,200,200)',
+        borderWidth: 1,
+        borderColor: 'rgb(200,200,200)',
 
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
+        // shadowColor: '#000',
+        // shadowOffset: { width: 0, height: 0 },
+        // shadowOpacity: 0.1,
+        // shadowRadius: 10,
 
-        elevation: 10,
+        // elevation: 10,
     },
 
 })

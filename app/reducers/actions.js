@@ -15,8 +15,10 @@ export const REFRESG_FEED_CASH = 'REFRESG_FEED_CASH'
 export const CLEAR_CASH = 'CLEAR_CASH'
 export const FETCH_ALL_WITH_CLEAR = 'FETCH_ALL_WITH_CLEAR'
 export const FETCH_ERR = 'FETCH_ERR'
+export const FETCH_ERR_TEXT = 'FETCH_ERR_TEXT'
 
 export const FONT_LOAD = 'FONT_LOAD'
 
+export const SET_ACTIVE_PLAN = 'SET_ACTIVE_PLAN'
 
 

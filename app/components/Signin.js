@@ -7,6 +7,11 @@ import * as Yup from 'yup'
 import * as actionCreators from '../reducers/actionCreators'
 import { connect } from 'react-redux'
 import Text from './SFText'
+import {
+    GoogleSignin,
+    GoogleSigninButton,
+    statusCodes,
+} from '@react-native-community/google-signin'
 
 export function Signin({ navigation, logInRequest, loginError, isLoginFetching, resetLoginError }) {
 
@@ -20,6 +25,58 @@ export function Signin({ navigation, logInRequest, loginError, isLoginFetching, 
             .min(6, '6 simbols min')
             .required('Required'),
     })
+
+
+    GoogleSignin.configure({
+        webClientId: '818625970032-fnnq7isghkv5tvk815m00vq1et11a5oq.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+        offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+    })
+
+    const signOut = async () => {
+        try {
+            await GoogleSignin.revokeAccess();
+            await GoogleSignin.signOut();
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
+    const signIn = async () => {
+        try {
+            if (await GoogleSignin.isSignedIn()) {
+                await GoogleSignin.revokeAccess();
+                await GoogleSignin.signOut();
+            }
+
+            await GoogleSignin.hasPlayServices()
+            // await GoogleSignin.revokeAccess()
+            const { user: { email, familyName, givenName, id } } = await GoogleSignin.signIn()
+
+            const obj = {
+                email,
+                password: id,
+            }
+
+            logInRequest(obj)
+            setShowFetchError(true)
+            resetLoginError()
+
+        } catch (error) {
+
+            if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+                // user cancelled the login flow
+            } else if (error.code === statusCodes.IN_PROGRESS) {
+                // operation (e.g. sign in) is in progress already
+            } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+                // play services not available or outdated
+            } else {
+                // some other error happened
+            }
+        }
+
+    };
 
 
     return (
@@ -42,11 +99,11 @@ export function Signin({ navigation, logInRequest, loginError, isLoginFetching, 
                 return (
                     <View style={styles.textContaier}>
                         <View style={{ alignItems: 'center', }}>
-                            <Text style={{ fontSize: 25, marginBottom: 20, color: '#7820fc', fontWeight: '600' }}>Log in</Text>
+                            <Text heavy style={{ fontSize: 25, marginBottom: 20, color: 'rgb(50,50,90)', fontWeight: '600' }}>LOG IN</Text>
                         </View>
-                        <View style={{ alignItems: 'center', }}>
+                        {/* <View style={{ alignItems: 'center', }}>
                             <Text style={{ fontSize: 15, marginBottom: 20, color: 'grey', textAlign: 'center' }}>Let's us know what your email and password</Text>
-                        </View>
+                        </View> */}
                         <KeyboardAvoidingView>
 
                             <View>
@@ -78,30 +135,36 @@ export function Signin({ navigation, logInRequest, loginError, isLoginFetching, 
                             </View>
                         </KeyboardAvoidingView>
                         <View style={{ marginTop: 30 }}>
-                            <LoginButton fetching={isLoginFetching} title='Log in' onPress={() => {
+                            <LoginButton round fetching={isLoginFetching} title='Log in' onPress={() => {
                                 props.submitForm()
                                 setShowFetchError(true)
                                 resetLoginError()
                             }} />
                         </View>
+                        <View style={{ marginVertical: 10 }}>
+                            {Platform.OS === 'ios' ? null :
+                                <LoginButton round google fetching={isLoginFetching} title='Log in with Google' type='submit'
+                                    onPress={signIn}
+                                />}
+                        </View>
                         <View>
                             {(loginError && showFetchError) ? <Text style={styles.errorText}>{loginError}</Text> : null}
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 20 }}>
-                            <View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 10 }}>
+                            {/* <View>
                                 <Text>Don't have an account?</Text>
-                            </View>
+                            </View> */}
                             <TouchableHighlight
                                 underlayColor="white"
                                 onPress={() => {
                                     navigation.reset({
-                                        index: 0,
-                                        routes: [{ name: 'Signupscreen' }],
+                                        index: 1,
+                                        routes: [{ name: 'Setscreen' }, { name: 'Signupscreen' }],
                                     });
 
                                     // navigation.navigate('Signupscreen')
                                 }}>
-                                <Text style={{ color: 'blue' }}>Sign up.</Text>
+                                <Text bold style={{ color: '#3283fc', fontSize: 20 }}>SIGN UP</Text>
                             </TouchableHighlight>
                         </View>
                     </View>
@@ -137,7 +200,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     textinput: {
-
+        height: 60,
         justifyContent: "center",
         paddingVertical: 2,
         backgroundColor: 'transparent',

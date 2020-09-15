@@ -110,7 +110,7 @@ const Signalcard = (props) => {
 
                 <View style={{ height: 150, backgroundColor: '#ffffff', paddingHorizontal: 20, paddingVertical: 10, backgroundColor: 'rgb(245,245,245)' }}>
                     <View >
-                        <View style={Object.assign({}, styles.price, { top: lastBottom })}><Text semibold>{signalData.graph.current_price}</Text></View>
+                        <View style={Object.assign({}, styles.price, { top: lastBottom ? lastBottom : 0 })}><Text semibold>{signalData.graph.current_price}</Text></View>
 
                         <View style={{ position: 'relative', height: '100%', width: '100%', left: -0, zIndex: 1, backgroundColor: 'rgb(245,245,245)' }}>
                             <LineChart

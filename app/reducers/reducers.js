@@ -7,6 +7,7 @@ const initialState = {
         isFetching: false,
         data: {},
         fetchErr: false,
+        fetchErrText: '',
         feedCash: {
             messages: [],
             profiles: [],
@@ -26,7 +27,10 @@ const initialState = {
             email: ''
         }
     },
-    fontLoadState: 'loading'
+    activePlan: {
+        currentPlanRecept: null,
+        planProcessing: false
+    }
 }
 
 
@@ -58,6 +62,13 @@ function fetchAllreducer(state, action) {
 function fetchErrReducer(state, action) {
     if (action.type === actions.FETCH_ERR) {
         return action.fetchErr
+    }
+    return state
+}
+
+function fetchErrTextReducer(state, action) {
+    if (action.type === actions.FETCH_ERR_TEXT) {
+        return action.fetchErrText
     }
     return state
 }
@@ -123,6 +134,15 @@ function loginDataReducer(state, action) {
 }
 
 
+function activePlanReducer(state, action) {
+    if (action.type === actions.SET_ACTIVE_PLAN) {
+        return action.json
+    }
+    return state
+}
+
+
+
 
 ////////////////    ROOT REDUCER   //////////////////
 
@@ -133,14 +153,17 @@ export const rootReducer = function (state = initialState, action) {
             data: fetchAllreducer(state.feedAll.data, action),
             isFetching: isFetchinReducer(state.feedAll.isFetching, action),
             feedCash: refreshFeedCashReducer(state.feedAll.feedCash, action),
-            fetchErr: fetchErrReducer(state.feedAll.fetchErr, action)
+            fetchErr: fetchErrReducer(state.feedAll.fetchErr, action),
+            fetchErrText: fetchErrTextReducer(state.feedAll.fetchErrText, action)
         },
         loginState: {
             isLoginFetching: isLoginFetchinReducer(state.loginState.isLoginFetching, action),
             loginError: loginErrorReducer(state.loginState.loginError, action),
             loginData: loginDataReducer(state.loginState.loginData, action)
         },
-        fontLoadState: fontLoadReducer(state.fontLoadState, action)
+        activePlan: {
+            currentPlanRecept: activePlanReducer(state.activePlan.currentPlanRecept, action)
+        }
     }
 }
 

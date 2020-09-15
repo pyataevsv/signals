@@ -40,6 +40,12 @@
         }
       }
     },
-    "description": "First try"
+    "description": "First try",
+    "sdkVersion": "38.0.0",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ]
   }
 }

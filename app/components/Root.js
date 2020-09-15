@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler'
-import React, { useEffect, useRef } from 'react'
-import { StyleSheet, Image, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native'
+import React, { Fragment, useEffect, useRef } from 'react'
+import { StyleSheet, Image, SafeAreaView, StatusBar, ActivityIndicator, Platform } from 'react-native'
 import * as actionCreators from '../reducers/actionCreators'
 import { connect } from 'react-redux'
 import { NavigationContainer } from '@react-navigation/native'
@@ -17,6 +17,7 @@ import Buyoptscreen from './Buyoptscreen'
 
 import * as Analytics from 'expo-firebase-analytics'
 
+import * as RNIap from 'react-native-iap'
 
 function TabNavigator(props) {
     return (
@@ -25,10 +26,10 @@ function TabNavigator(props) {
                 style: {
                     borderTopWidth: 1,
                     borderTopColor: 'rgb(200,200,200)'
-                },
+                }
             }}
-            // initialRouteName="Feed"
-            initialRouteName="Stats"
+            initialRouteName="Feed"
+
         >
             <Tab.Screen
                 name='Feed'
@@ -38,7 +39,7 @@ function TabNavigator(props) {
                         let iconPath = (focused) ? require('../assets/icons/feed.png') : require('../assets/icons/feed_black.png')
                         return <Image style={styles.tabIcon} source={iconPath} />
                     },
-                    title: route.name,
+                    title: 'Feed',
                 })}
 
             />
@@ -63,7 +64,7 @@ function TabNavigator(props) {
                         let iconPath = (focused) ? require('../assets/icons/settings_a.png') : require('../assets/icons/settings.png')
                         return <Image style={styles.tabIcon} source={iconPath} />
                     },
-                    title: route.name
+                    title: 'Settings'
 
                 })}
             />
@@ -74,22 +75,33 @@ function TabNavigator(props) {
 const Tab = createBottomTabNavigator()
 const WelcomeStack = createStackNavigator()
 
-
-function Root({ fetchAll, fetchALLWithClear, api_key, firstEnter, fontLoad }) {
+function Root({ fetchAll, fetchALLWithClear, api_key, firstEnter, currentPlanRecept }) {
     const keyRef = useRef('bonjour')
     const routeNameRef = React.useRef()
     const navigationRef = React.useRef()
-    console.log(fontLoad)
-
-
     useEffect(() => {
         if (keyRef.current != api_key) {
             keyRef.current = api_key
             fetchALLWithClear({ limit: 10, page: 1, key: api_key }, -1)
-
         }
     })
-    console.log(fontLoad)
+
+    console.log(currentPlanRecept)
+
+    //socket connection
+
+    // useEffect(() => {
+    //     let socket = new WebSocket("ws://148.251.195.78:48/app/ws")
+    //     socket.onopen = () => {
+    //         console.log('openWs')
+    //         console.log(socket.readyState)
+    //     }
+    //     socket.onmessage = (e) => {
+    //         console.log('message event')
+    //         console.log(e)
+    //     }
+    // })
+
 
     return (
         <NavigationContainer
@@ -104,16 +116,21 @@ function Root({ fetchAll, fetchALLWithClear, api_key, firstEnter, fontLoad }) {
                 routeNameRef.current = currentRouteName;
             }}
         >
-            <SafeAreaView style={{ flex: 1, marginTop: StatusBar.currentHeight || 0 }}>
+            <SafeAreaView style={{ flex: 1, }}>
+                <StatusBar backgroundColor="white" barStyle={'dark-content'} />
                 <WelcomeStack.Navigator
                 // mode='modal'
                 >
                     {/* {firstEnter ? <WelcomeStack.Screen name='WelcomeScreen' component={WelcomeScreen} /> : null} */}
                     {/* <WelcomeStack.Screen options={{ headerShown: false }} name='WelcomeScreen' component={WelcomeScreen} /> */}
                     <WelcomeStack.Screen options={{ headerShown: false }} name='TabNavigator' component={TabNavigator} />
-                    <WelcomeStack.Screen options={{ title: '' }} name="Premiumscreen" component={Premiumscreen} />
-                    <WelcomeStack.Screen options={{ title: '' }} name="Brokerpromo" component={Brokerpromo} />
-                    <WelcomeStack.Screen options={{ title: '' }} name="Buyoptscreen" component={Buyoptscreen} />
+                    {!currentPlanRecept ?
+                        <Fragment>
+                            <WelcomeStack.Screen options={{ title: '', headerBackTitle: 'Back', headerShown: Platform.OS === 'ios' ? true : false }} name="Premiumscreen" component={Premiumscreen} />
+                            <WelcomeStack.Screen options={{ title: '', headerBackTitle: 'Back', headerShown: Platform.OS === 'ios' ? true : false }} name="Brokerpromo" component={Brokerpromo} />
+                            <WelcomeStack.Screen options={{ title: '', headerBackTitle: 'Back', headerShown: Platform.OS === 'ios' ? true : false }} name="Buyoptscreen" component={Buyoptscreen} />
+                        </Fragment>
+                        : null}
                 </WelcomeStack.Navigator>
             </SafeAreaView>
 
@@ -149,10 +166,9 @@ Root = connect(
     (state) => {
         return {
             api_key: state.loginState.loginData.key,
-            fontLoad: state.fontLoadState
+            currentPlanRecept: state.activePlan.currentPlanRecept
         }
     },
-
     //mapDispatchToProp
     (dispatch) => {
         return {

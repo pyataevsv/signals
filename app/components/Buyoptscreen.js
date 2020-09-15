@@ -1,11 +1,74 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { View, SafeAreaView, StyleSheet, Image } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { LoginButton } from './Buttons'
 import { TransparentButton } from './Buttons'
 import Text from './SFText'
+import { requestSubscription } from 'react-native-iap'
+import AsyncStorage from '@react-native-community/async-storage';
+
+
+import RNIap, {
+    InAppPurchase,
+    PurchaseError,
+    SubscriptionPurchase,
+    acknowledgePurchaseAndroid,
+    consumePurchaseAndroid,
+    finishTransaction,
+    finishTransactionIOS,
+    purchaseErrorListener,
+    purchaseUpdatedListener,
+} from 'react-native-iap';
 
 const Buyoptscreen = () => {
+
+    const updRef = useRef()
+    const errRef = useRef()
+
+    useEffect(() => {
+        const itemSkus = Platform.select({
+            ios: [
+                'iap1'
+            ],
+            android: [
+                'com.mightio.signal.sub1',
+                'testsub2',
+                'testsub'
+            ]
+        })
+
+        async function getProducts() {
+
+            try {
+                const result = await RNIap.initConnection();
+                console.log('result', result);
+
+                const subscriptions = await RNIap.getSubscriptions(itemSkus);
+                console.log('subscriptions', subscriptions);
+
+            } catch (err) {
+                console.warn(err) // standardized err.code and err.message available
+            }
+
+            try {
+                const purchases = await RNIap.getAvailablePurchases();
+
+                console.log('AvialabalePurch', purchases)
+            } catch (err) {
+                console.log('ErrAvialabalePurch', err); // standardized err.code and err.message available
+
+            }
+
+            let plan = await AsyncStorage.getItem('user_plan');
+            console.log('AsyncPlanData: ', plan)
+        }
+        getProducts()
+
+
+
+    })
+
+
     return (
         <LinearGradient
             colors={['#9025FC', '#1308FE']}
@@ -23,15 +86,23 @@ const Buyoptscreen = () => {
                 <View style={{ width: '80%', justifyContent: 'flex-end', flexGrow: 1 }}>
                     <Image style={{ position: 'absolute', left: '60%', top: '-30%' }} source={require('../assets/images/thing.png')} />
                     <View style={styles.buttonBox}>
-                        <LoginButton white round title='One mounth 9.99$' />
+                        <LoginButton
+                            onPress={() => {
+                                requestSubscription('testsub')
+                            }}
+                            white round title='One month 9.99$' />
                         <Text style={styles.underButton}>You saving 10% (29.99$)</Text>
                     </View>
                     <View style={styles.buttonBox}>
-                        <LoginButton white round title='Three mounth 20.99$' />
+                        <LoginButton
+                            onPress={() => {
+                                requestSubscription('testsub2')
+                            }}
+                            white round title='Three month 20.99$' />
                         <Text style={styles.underButton}>You saving 20% (29.99$)</Text>
                     </View>
                     <View style={styles.buttonBox}>
-                        <LoginButton white round title='Six mounth 49.99$' />
+                        <LoginButton white round title='Six month 49.99$' />
                         <Text style={styles.underButton}>You saving 30% (79.99$)</Text>
                     </View>
                     <View style={styles.buttonBox}>

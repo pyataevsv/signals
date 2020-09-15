@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, ScrollView, Image } from 'react-native'
+import { View, StyleSheet, ScrollView, Image, Dimensions } from 'react-native'
 import { connect } from 'react-redux'
 import { isFetching } from '../reducers/actionCreators'
 import Text from './SFText'
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler'
 import { LinearGradient } from 'expo-linear-gradient'
 import Monthchart from './Monthchart'
+
+import * as RNIap from 'react-native-iap'
 
 function Stats(props) {
 
@@ -115,8 +117,8 @@ function Stats(props) {
         )
     } else if (isFetching) {
         return (
-            <View>
-                <Text> fething </Text>
+            <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center', minHeight: Dimensions.get('window').height }}>
+                <Text>Something went wrong:(</Text>
             </View>
         )
     } else {
@@ -154,15 +156,15 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         marginHorizontal: 10,
         borderRadius: 5,
-        // borderWidth: 1,
-        // borderColor: 'rgb(200,200,200)',
+        borderWidth: 1,
+        borderColor: 'rgb(200,200,200)',
 
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
+        // shadowColor: '#000',
+        // shadowOffset: { width: 0, height: 0 },
+        // shadowOpacity: 0.3,
+        // shadowRadius: 3,
 
-        elevation: 5,
+        // elevation: 5,
 
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -189,15 +191,15 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         marginHorizontal: 10,
         borderRadius: 5,
-        // borderWidth: 1,
-        // borderColor: 'rgb(200,200,200)',
+        borderWidth: 1,
+        borderColor: 'rgb(200,200,200)',
 
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
+        // shadowColor: '#000',
+        // shadowOffset: { width: 0, height: 0 },
+        // shadowOpacity: 0.3,
+        // shadowRadius: 3,
 
-        elevation: 6,
+        // elevation: 6,
 
     },
     backlay: {

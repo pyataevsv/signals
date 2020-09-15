@@ -19,17 +19,22 @@ export class Text extends Component {
         super(props)
         this.state = {
             fontsLoaded: false,
-        };
+        }
+        this._isMounted = false;
     }
 
     async _loadFontsAsync() {
         await Font.loadAsync(customFonts)
         // this.props.fontLoad('done')
-        this.setState({ fontsLoaded: true });
+        this._isMounted && this.setState({ fontsLoaded: true });
     }
 
     componentDidMount() {
+        this._isMounted = true;
         this._loadFontsAsync();
+    }
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
     render() {

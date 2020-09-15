@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useReducer } from 'react'
-import { StyleSheet, View, Button, Image, ScrollView, ActivityIndicator, RefreshControl, Animated } from 'react-native'
+import { StyleSheet, View, Button, Image, ScrollView, ActivityIndicator, RefreshControl, Animated, Dimensions } from 'react-native'
 import * as actionCreators from '../reducers/actionCreators'
 import { Provider, connect } from 'react-redux'
 import Signalcard from './Signalcard'
@@ -11,8 +11,9 @@ import Historyscreen from './Historyscreen'
 import Message from './Messagecard'
 import Signal from './Signal'
 import Text from './SFText'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
-export default function Feed({ fetchAll, navigation, feedCash, isFetching, clearCash, fetchALLWithClear, fetchErr, api_key }) {
+export default function Feed({ fetchErrText, fetchAll, navigation, feedCash, isFetching, clearCash, fetchALLWithClear, fetchErr, api_key }) {
 
     const [blockFetching, setBlockFetching] = useState(false)
     const [fetching, setFetchingStatus] = useState(false)
@@ -49,9 +50,8 @@ export default function Feed({ fetchAll, navigation, feedCash, isFetching, clear
 
 
     function getDonOffset(mass) {
-
         for (let item of mass) {
-            if (item[2] === 'Done') return item[0]
+            if (item[3] === 'done') return item[0]
         };
         return null
     }
@@ -59,13 +59,17 @@ export default function Feed({ fetchAll, navigation, feedCash, isFetching, clear
 
 
     return (
-        <View style={{ backgroundColor: 'rgb(240,240,240)', }} >
+        <View style={{ backgroundColor: 'rgb(255,255,255)', }} >
             <Animated.View style={[styles.header, { top: headerTop, }]}>
-                <Text heavy style={{ fontSize: 16 }}>{headerWord}</Text>
+                <Text heavy style={{ fontSize: 25, color: 'rgb(50,50,90)' }}>{headerWord}</Text>
             </Animated.View>
-            <ScrollView style={{ backgroundColor: 'rgb(250,250,250)', marginTop: 0 }}
+            <ScrollView
+                style={{
+                    backgroundColor: 'rgb(255,255,255)',
+                    marginTop: 0,
+                    minHeight: Dimensions.get('window').height,
+                }}
                 contentContainerStyle={{ paddingTop: 0 }}
-
                 onScroll={(e) => {
                     if ((e.nativeEvent.contentOffset.y + e.nativeEvent.layoutMeasurement.height >= e.nativeEvent.contentSize.height - 500) && !blockFetching && feedCash.page_info.has_next_page && cardsY.length > 0) {
 
@@ -130,11 +134,14 @@ export default function Feed({ fetchAll, navigation, feedCash, isFetching, clear
                 {(fetchErr && feedCash.messages.length != 0 && showErrMessage) ?
                     <View style={{ backgroundColor: 'red', alignItems: 'center' }}>
                         <Text style={{ color: 'white', fontSize: 12, fontWeight: 'bold', paddingVertical: 1 }}>Something went wrong...</Text>
+                        <Text>{fetchErrText}</Text>
                     </View>
                     : null}
                 {(fetchErr && feedCash.messages.length === 0) ?
-                    <View style={{ alignItems: 'center' }}>
-                        <Text>Something went wrong!</Text>
+                    <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center', minHeight: Dimensions.get('window').height }}>
+                        <Text>Something went wrong:(</Text>
+                        <Text>Pull down to reload.</Text>
+                        <Text>{fetchErrText}</Text>
                     </View>
                     : null}
                 <View>
@@ -159,6 +166,7 @@ export default function Feed({ fetchAll, navigation, feedCash, isFetching, clear
                             }
                             if (item.type === 'signal' && item.status === 'active' && ((item.has_subscription === true && item.payment === 'paid') || item.payment === 'free')) {
                                 return (
+
                                     <Signalcard feedAll={feedCash} signalData={item} key={id} id={id} setHeader={(x) => setCardsY(cardsY.concat([x]))} />
                                 )
                             }
@@ -183,7 +191,7 @@ export default function Feed({ fetchAll, navigation, feedCash, isFetching, clear
                     {(!feedCash.page_info.has_next_page && feedCash.messages.length > 0) ?
                         <View style={{ marginHorizontal: 20, marginTop: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                             <View style={{ alignItems: 'center' }}>
-                                <Text style={{ fontSize: 20, fontWeight: '700', color: 'rgb(50,50,90)' }}>-END-</Text>
+                                <Text style={{ fontSize: 20, fontWeight: '700', color: 'rgb(50,50,90)' }}>end</Text>
                             </View>
                         </View> : null
                     }
@@ -207,6 +215,7 @@ Feed = connect(
             feedCash: state.feedAll.feedCash,
             isFetching: state.feedAll.isFetching,
             fetchErr: state.feedAll.fetchErr,
+            fetchErrText: state.feedAll.fetchErrText,
             api_key: state.loginState.loginData.key
         }
     },
@@ -228,7 +237,8 @@ Feed = connect(
 const styles = StyleSheet.create({
     header: {
         justifyContent: 'center',
-        alignItems: 'center',
+        // alignItems: 'center',
+        paddingLeft: 15,
         position: 'absolute',
         height: 40,
         left: 0, width: '100%',
